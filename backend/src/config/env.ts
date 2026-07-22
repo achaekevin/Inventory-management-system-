@@ -72,4 +72,5 @@ if (missing.length > 0) {
   throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
 }
 
+export { config };
 export default config;
