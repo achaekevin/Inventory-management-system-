@@ -9,6 +9,7 @@ import {
   LockScreenPage,
   SessionExpiredPage,
 } from '@/features/auth/pages'
+import { LandingPage } from '@/pages/LandingPage'
 import { DashboardPage } from '@/features/dashboard/pages'
 import { ProductsListPage, ProductFormPage } from '@/features/products/pages'
 import { CategoriesListPage } from '@/features/categories/pages'
@@ -47,7 +48,11 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/dashboard" replace />,
+    element: <LandingPage />,
+  },
+  {
+    path: '/app',
+    element: <Navigate to="/app/dashboard" replace />,
   },
   {
     path: '/',
@@ -96,7 +101,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: '/',
+    path: '/app',
     element: (
       <ProtectedRoute>
         <MainLayout />
