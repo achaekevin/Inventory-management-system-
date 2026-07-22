@@ -4,21 +4,22 @@ import { ForbiddenError } from '../errors/AppError';
 
 /**
  * Authorize middleware - checks if user has required permissions
+ * @param module - The module name (e.g., 'products', 'sales')
+ * @param action - The action (e.g., 'create', 'read', 'update', 'delete')
  */
-export const authorize = (...requiredPermissions: string[]) => {
+export const authorize = (module: string, action: string) => {
   return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
       return next(new ForbiddenError('Authentication required'));
     }
 
-    const hasPermission = requiredPermissions.some((permission) =>
-      req.user!.permissions.includes(permission)
-    );
+    const requiredPermission = `${module}.${action}`;
+    const hasPermission = req.user.permissions.includes(requiredPermission);
 
     if (!hasPermission) {
       return next(
         new ForbiddenError(
-          `You don't have permission to perform this action. Required: ${requiredPermissions.join(' or ')}`
+          `You don't have permission to perform this action. Required: ${requiredPermission}`
         )
       );
     }
