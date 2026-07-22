@@ -1,0 +1,7 @@
+export { LoginPage } from './login-page'
+export { ForgotPasswordPage } from './forgot-password-page'
+export { ResetPasswordPage } from './reset-password-page'
+export { ChangePasswordPage } from './change-password-page'
+export { VerifyOTPPage } from './verify-otp-page'
+export { LockScreenPage } from './lock-screen-page'
+export { SessionExpiredPage } from './session-expired-page'
