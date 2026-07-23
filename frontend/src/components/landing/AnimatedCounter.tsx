@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
-import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
+import CountUpRaw from 'react-countup';
+
+const CountUp: any = (CountUpRaw as any)?.default || CountUpRaw;
 
 interface AnimatedCounterProps {
   end: number;
@@ -19,14 +20,14 @@ export function AnimatedCounter({
 }: AnimatedCounterProps) {
   const [ref, inView] = useInView({
     triggerOnce: true,
-    threshold: 0.5,
+    threshold: 0.1,
   });
 
-  const countUpRef = useRef<HTMLSpanElement>(null);
+  const isCountUpValid = typeof CountUp === 'function';
 
   return (
     <span ref={ref}>
-      {inView && (
+      {inView && isCountUpValid ? (
         <CountUp
           start={0}
           end={end}
@@ -37,6 +38,8 @@ export function AnimatedCounter({
           prefix={prefix}
           useEasing={true}
         />
+      ) : (
+        `${prefix}${end.toLocaleString()}${suffix}`
       )}
     </span>
   );
