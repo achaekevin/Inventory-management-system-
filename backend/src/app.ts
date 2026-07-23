@@ -97,15 +97,15 @@ const globalLimiter = rateLimit({
 });
 app.use(globalLimiter);
 
-// Strict Rate Limiter for Authentication routes - Maximum 5 attempts per 15 minutes
+// Strict Rate Limiter for Authentication routes - Maximum 5 attempts per 3 minutes
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Maximum 5 attempts per 15 minutes
+  windowMs: 3 * 60 * 1000, // 3 minutes
+  max: 5, // Maximum 5 attempts per 3 minutes
   standardHeaders: true,
   legacyHeaders: false,
   message: {
     status: 'fail',
-    message: 'Too many authentication attempts. Please try again after 15 minutes.',
+    message: 'Too many authentication attempts. Please try again after 3 minutes.',
   },
 });
 
