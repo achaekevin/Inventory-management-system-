@@ -6,13 +6,23 @@ import logger from '../../config/logger';
 export interface CreateRoleDto {
   name: string;
   description?: string;
-  permissions: Array<{ resource: string; action: string }>;
+  permissions?: Array<{ resource: string; action: string }>;
 }
 
 export interface UpdateRoleDto {
   name?: string;
   description?: string;
   permissions?: Array<{ resource: string; action: string }>;
+  isActive?: boolean;
+}
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 export class RoleService {
@@ -22,9 +32,7 @@ export class RoleService {
   async getRoles(filters: PaginationParams & { isActive?: boolean }) {
     const { skip, take, page, pageSize } = getPaginationParams(filters);
 
-    const where: any = {
-      deletedAt: null,
-    };
+    const where: any = {};
 
     if (filters.search) {
       where.OR = [
@@ -45,9 +53,14 @@ export class RoleService {
         include: {
           permissions: {
             select: {
-              id: true,
-              resource: true,
-              action: true,
+              permission: {
+                select: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                  module: true,
+                },
+              },
             },
           },
           _count: {
@@ -79,10 +92,7 @@ export class RoleService {
       include: {
         permissions: {
           select: {
-            id: true,
-            resource: true,
-            action: true,
-            description: true,
+            permission: true,
           },
         },
         _count: {
@@ -91,7 +101,7 @@ export class RoleService {
       },
     });
 
-    if (!role || role.deletedAt) {
+    if (!role) {
       throw new NotFoundError('Role not found');
     }
 
@@ -102,36 +112,31 @@ export class RoleService {
    * Create new role
    */
   async createRole(data: CreateRoleDto, userId: string) {
-    // Check if name already exists
     const existingRole = await prisma.role.findFirst({
-      where: {
-        name: data.name,
-        deletedAt: null,
-      },
+      where: { name: data.name },
     });
 
     if (existingRole) {
       throw new ConflictError('Role name already exists');
     }
 
-    // Create role with permissions
+    const slug = slugify(data.name);
+
     const role = await prisma.role.create({
       data: {
         name: data.name,
+        slug,
         description: data.description,
-        permissions: {
-          create: data.permissions.map((perm) => ({
-            resource: perm.resource,
-            action: perm.action,
-          })),
-        },
       },
       include: {
-        permissions: true,
+        permissions: {
+          include: {
+            permission: true,
+          },
+        },
       },
     });
 
-    // Create audit log
     await this.createAuditLog(userId, 'create', role.id, null, role);
 
     logger.info(`Role created: ${role.name}`);
@@ -145,12 +150,10 @@ export class RoleService {
   async updateRole(id: string, data: UpdateRoleDto, userId: string) {
     const existingRole = await this.getRoleById(id);
 
-    // Check name uniqueness if being updated
     if (data.name && data.name !== existingRole.name) {
       const nameExists = await prisma.role.findFirst({
         where: {
           name: data.name,
-          deletedAt: null,
           id: { not: id },
         },
       });
@@ -160,86 +163,62 @@ export class RoleService {
       }
     }
 
-    // Use transaction to update role and permissions
-    const role = await prisma.$transaction(async (tx) => {
-      // Update role basic info
-      const updatedRole = await tx.role.update({
-        where: { id },
-        data: {
-          name: data.name,
-          description: data.description,
+    const slug = data.name ? slugify(data.name) : undefined;
+
+    const role = await prisma.role.update({
+      where: { id },
+      data: {
+        name: data.name,
+        slug,
+        description: data.description,
+        isActive: data.isActive,
+      },
+      include: {
+        permissions: {
+          include: {
+            permission: true,
+          },
         },
-      });
-
-      // Update permissions if provided
-      if (data.permissions) {
-        // Delete existing permissions
-        await tx.permission.deleteMany({
-          where: { roleId: id },
-        });
-
-        // Create new permissions
-        await tx.permission.createMany({
-          data: data.permissions.map((perm) => ({
-            roleId: id,
-            resource: perm.resource,
-            action: perm.action,
-          })),
-        });
-      }
-
-      // Fetch updated role with permissions
-      return tx.role.findUnique({
-        where: { id },
-        include: {
-          permissions: true,
-        },
-      });
+      },
     });
 
-    // Create audit log
     await this.createAuditLog(userId, 'update', id, existingRole, role);
 
-    logger.info(`Role updated: ${role!.name}`);
+    logger.info(`Role updated: ${role.name}`);
 
     return role;
   }
 
   /**
-   * Delete role (soft delete)
+   * Delete role (deactivate)
    */
   async deleteRole(id: string, userId: string) {
     const role = await this.getRoleById(id);
 
-    // Check if role has users
-    const userCount = await prisma.user.count({
-      where: {
-        roleId: id,
-        deletedAt: null,
-      },
+    const userCount = await prisma.userRole.count({
+      where: { roleId: id },
     });
 
     if (userCount > 0) {
       throw new BadRequestError(
-        `Cannot delete role with ${userCount} user(s). Please reassign users first.`
+        `Cannot delete role assigned to ${userCount} user(s). Please reassign users first.`
       );
     }
 
-    const deletedRole = await prisma.role.update({
+    const deactivatedRole = await prisma.role.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: { isActive: false },
     });
 
-    // Create audit log
     await this.createAuditLog(userId, 'delete', id, role, null);
 
-    logger.info(`Role deleted: ${role.name}`);
+    logger.info(`Role deactivated: ${role.name}`);
 
-    return deletedRole;
+    return deactivatedRole;
   }
 
   /**
-   * Restore deleted role
+   * Restore role (reactivate)
    */
   async restoreRole(id: string, userId: string) {
     const role = await prisma.role.findUnique({ where: { id } });
@@ -248,19 +227,22 @@ export class RoleService {
       throw new NotFoundError('Role not found');
     }
 
-    if (!role.deletedAt) {
-      throw new BadRequestError('Role is not deleted');
+    if (role.isActive) {
+      throw new BadRequestError('Role is already active');
     }
 
     const restoredRole = await prisma.role.update({
       where: { id },
-      data: { deletedAt: null },
+      data: { isActive: true },
       include: {
-        permissions: true,
+        permissions: {
+          include: {
+            permission: true,
+          },
+        },
       },
     });
 
-    // Create audit log
     await this.createAuditLog(userId, 'restore', id, role, restoredRole);
 
     logger.info(`Role restored: ${restoredRole.name}`);
@@ -269,37 +251,14 @@ export class RoleService {
   }
 
   /**
-   * Get all available permissions (resources and actions)
+   * Get all available permissions
    */
   async getAvailablePermissions() {
-    const resources = [
-      'products',
-      'categories',
-      'brands',
-      'units',
-      'warehouses',
-      'inventory',
-      'suppliers',
-      'customers',
-      'purchases',
-      'sales',
-      'payments',
-      'users',
-      'roles',
-      'reports',
-      'settings',
-      'dashboard',
-    ];
+    const permissions = await prisma.permission.findMany({
+      orderBy: [{ module: 'asc' }, { name: 'asc' }],
+    });
 
-    const actions = ['create', 'read', 'update', 'delete'];
-
-    return {
-      resources,
-      actions,
-      combinations: resources.flatMap((resource) =>
-        actions.map((action) => ({ resource, action }))
-      ),
-    };
+    return permissions;
   }
 
   /**

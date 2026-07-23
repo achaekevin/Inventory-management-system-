@@ -17,7 +17,7 @@ export class RoleController {
       };
 
       const result = await roleService.getRoles(filters);
-      ResponseHandler.success(res, result.data, 'Roles retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Roles retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -28,7 +28,8 @@ export class RoleController {
    */
   async getRoleById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const role = await roleService.getRoleById(req.params.id);
+      const roleId = (req.params as any).id;
+      const role = await roleService.getRoleById(roleId);
       ResponseHandler.success(res, role, 'Role retrieved successfully');
     } catch (error) {
       next(error);
@@ -54,7 +55,8 @@ export class RoleController {
   async updateRole(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const role = await roleService.updateRole(req.params.id, req.body, userId);
+      const roleId = (req.params as any).id;
+      const role = await roleService.updateRole(roleId, req.body, userId);
       ResponseHandler.success(res, role, 'Role updated successfully');
     } catch (error) {
       next(error);
@@ -67,7 +69,8 @@ export class RoleController {
   async deleteRole(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await roleService.deleteRole(req.params.id, userId);
+      const roleId = (req.params as any).id;
+      await roleService.deleteRole(roleId, userId);
       ResponseHandler.success(res, null, 'Role deleted successfully');
     } catch (error) {
       next(error);
@@ -80,7 +83,8 @@ export class RoleController {
   async restoreRole(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const role = await roleService.restoreRole(req.params.id, userId);
+      const roleId = (req.params as any).id;
+      const role = await roleService.restoreRole(roleId, userId);
       ResponseHandler.success(res, role, 'Role restored successfully');
     } catch (error) {
       next(error);
@@ -90,7 +94,7 @@ export class RoleController {
   /**
    * Get available permissions
    */
-  async getAvailablePermissions(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+  async getAvailablePermissions(_req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const permissions = await roleService.getAvailablePermissions();
       ResponseHandler.success(res, permissions, 'Available permissions retrieved successfully');

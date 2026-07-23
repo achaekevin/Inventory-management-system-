@@ -1,6 +1,5 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
 import prisma from '../../config/database';
 import config from '../../config/env';
 import {
@@ -201,7 +200,7 @@ export class AuthService {
       const decoded = jwt.verify(refreshToken, config.JWT_REFRESH_SECRET) as any;
 
       // Check if refresh token exists in database
-      const tokenRecord = await prisma.refreshToken.findUnique({
+      const tokenRecord = await prisma.refreshToken.findFirst({
         where: { token: refreshToken },
       });
 
@@ -213,7 +212,7 @@ export class AuthService {
       const tokens = await this.generateTokenPair(decoded.userId);
 
       // Delete old refresh token
-      await prisma.refreshToken.delete({
+      await prisma.refreshToken.deleteMany({
         where: { token: refreshToken },
       });
 
@@ -285,9 +284,7 @@ export class AuthService {
       return 'If the email exists, a password reset link has been sent';
     }
 
-    // Generate reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
 
     // Store hashed token (you might want to add a passwordResetToken field to User model)
     // For now, we'll use a temporary solution
@@ -302,10 +299,7 @@ export class AuthService {
   /**
    * Reset password with token
    */
-  async resetPassword(token: string, newPassword: string): Promise<void> {
-    // Hash the provided token
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-
+  async resetPassword(_token: string, _newPassword: string): Promise<void> {
     // TODO: Find user by reset token and validate expiry
     // For now, throw error
     throw new BadRequestError('Password reset functionality not fully implemented');
@@ -318,12 +312,12 @@ export class AuthService {
     userId: string,
     longExpiry: boolean = false
   ): Promise<TokenPair> {
-    const accessToken = jwt.sign({ userId }, config.JWT_ACCESS_SECRET, {
-      expiresIn: config.JWT_ACCESS_EXPIRY,
+    const accessToken = jwt.sign({ userId }, config.JWT_ACCESS_SECRET as string, {
+      expiresIn: (config.JWT_ACCESS_EXPIRY || '15m') as any,
     });
 
-    const refreshToken = jwt.sign({ userId }, config.JWT_REFRESH_SECRET, {
-      expiresIn: longExpiry ? '30d' : config.JWT_REFRESH_EXPIRY,
+    const refreshToken = jwt.sign({ userId }, config.JWT_REFRESH_SECRET as string, {
+      expiresIn: (longExpiry ? '30d' : config.JWT_REFRESH_EXPIRY || '7d') as any,
     });
 
     // Store refresh token
@@ -443,7 +437,7 @@ export class AuthService {
     });
 
     const permissions = updatedUser.roles.flatMap((ur) =>
-      ur.role.permissions.map((rp) => `${rp.permission.module}.${rp.permission.action}`)
+      ur.role.permissions.map((rp) => `${rp.permission.module}.${rp.permission.slug}`)
     );
 
     return {

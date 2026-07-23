@@ -3,7 +3,7 @@ import { z } from 'zod';
 const permissionSchema = z.object({
   resource: z.string().min(2, 'Resource name must be at least 2 characters'),
   action: z.enum(['create', 'read', 'update', 'delete'], {
-    errorMap: () => ({ message: 'Action must be one of: create, read, update, delete' }),
+    message: 'Action must be one of: create, read, update, delete',
   }),
 });
 

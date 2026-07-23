@@ -15,7 +15,7 @@ export class UserController {
       };
 
       const result = await userService.getUsers(filters);
-      ResponseHandler.success(res, result.data, 'Users retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Users retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -23,7 +23,8 @@ export class UserController {
 
   async getUserById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = await userService.getUserById(req.params.id);
+      const targetUserId = (req.params as any).id;
+      const user = await userService.getUserById(targetUserId);
       ResponseHandler.success(res, user, 'User retrieved successfully');
     } catch (error) {
       next(error);
@@ -43,7 +44,8 @@ export class UserController {
   async updateUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const user = await userService.updateUser(req.params.id, req.body, userId);
+      const targetUserId = (req.params as any).id;
+      const user = await userService.updateUser(targetUserId, req.body, userId);
       ResponseHandler.success(res, user, 'User updated successfully');
     } catch (error) {
       next(error);
@@ -53,7 +55,8 @@ export class UserController {
   async deleteUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await userService.deleteUser(req.params.id, userId);
+      const targetUserId = (req.params as any).id;
+      await userService.deleteUser(targetUserId, userId);
       ResponseHandler.success(res, null, 'User deleted successfully');
     } catch (error) {
       next(error);
@@ -63,7 +66,8 @@ export class UserController {
   async restoreUser(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const user = await userService.restoreUser(req.params.id, userId);
+      const targetUserId = (req.params as any).id;
+      const user = await userService.restoreUser(targetUserId, userId);
       ResponseHandler.success(res, user, 'User restored successfully');
     } catch (error) {
       next(error);
@@ -73,8 +77,9 @@ export class UserController {
   async resetUserPassword(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
+      const targetUserId = (req.params as any).id;
       const { newPassword } = req.body;
-      const result = await userService.resetUserPassword(req.params.id, newPassword, userId);
+      const result = await userService.resetUserPassword(targetUserId, newPassword, userId);
       ResponseHandler.success(res, result, 'Password reset successfully');
     } catch (error) {
       next(error);

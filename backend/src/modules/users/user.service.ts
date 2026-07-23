@@ -48,7 +48,11 @@ export class UserService {
     }
 
     if (filters.roleId) {
-      where.roleId = filters.roleId;
+      where.roles = {
+        some: {
+          roleId: filters.roleId,
+        },
+      };
     }
 
     if (filters.isActive !== undefined) {
@@ -67,15 +71,19 @@ export class UserService {
           lastName: true,
           phone: true,
           isActive: true,
-          emailVerified: true,
+          isEmailVerified: true,
           lastLoginAt: true,
           createdAt: true,
           updatedAt: true,
-          role: {
+          roles: {
             select: {
-              id: true,
-              name: true,
-              description: true,
+              role: {
+                select: {
+                  id: true,
+                  name: true,
+                  description: true,
+                },
+              },
             },
           },
         },
@@ -108,19 +116,25 @@ export class UserService {
         lastName: true,
         phone: true,
         isActive: true,
-        emailVerified: true,
+        isEmailVerified: true,
         lastLoginAt: true,
-        failedLoginAttempts: true,
-        accountLockedUntil: true,
+        failedLoginCount: true,
+        lockedUntil: true,
         createdAt: true,
         updatedAt: true,
-        role: {
-          include: {
-            permissions: {
+        deletedAt: true,
+        roles: {
+          select: {
+            role: {
               select: {
                 id: true,
-                resource: true,
-                action: true,
+                name: true,
+                description: true,
+                permissions: {
+                  select: {
+                    permission: true,
+                  },
+                },
               },
             },
           },
@@ -153,14 +167,14 @@ export class UserService {
       where: { id: data.roleId },
     });
 
-    if (!role || role.deletedAt) {
+    if (!role) {
       throw new BadRequestError('Role not found');
     }
 
     // Hash password
     const hashedPassword = await bcrypt.hash(data.password, config.BCRYPT_ROUNDS);
 
-    // Create user
+    // Create user with role
     const user = await prisma.user.create({
       data: {
         email: data.email,
@@ -168,7 +182,11 @@ export class UserService {
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,
-        roleId: data.roleId,
+        roles: {
+          create: {
+            roleId: data.roleId,
+          },
+        },
       },
       select: {
         id: true,
@@ -178,11 +196,15 @@ export class UserService {
         phone: true,
         isActive: true,
         createdAt: true,
-        role: {
+        roles: {
           select: {
-            id: true,
-            name: true,
-            description: true,
+            role: {
+              select: {
+                id: true,
+                name: true,
+                description: true,
+              },
+            },
           },
         },
       },
@@ -219,15 +241,29 @@ export class UserService {
         where: { id: data.roleId },
       });
 
-      if (!role || role.deletedAt) {
+      if (!role) {
         throw new BadRequestError('Role not found');
       }
+
+      // Update role binding
+      await prisma.userRole.deleteMany({
+        where: { userId: id },
+      });
+
+      await prisma.userRole.create({
+        data: {
+          userId: id,
+          roleId: data.roleId,
+        },
+      });
     }
 
-    // Update user
+    const { roleId, ...updateFields } = data;
+
+    // Update user fields
     const user = await prisma.user.update({
       where: { id },
-      data,
+      data: updateFields,
       select: {
         id: true,
         email: true,
@@ -236,11 +272,15 @@ export class UserService {
         phone: true,
         isActive: true,
         updatedAt: true,
-        role: {
+        roles: {
           select: {
-            id: true,
-            name: true,
-            description: true,
+            role: {
+              select: {
+                id: true,
+                name: true,
+                description: true,
+              },
+            },
           },
         },
       },
@@ -307,10 +347,14 @@ export class UserService {
         firstName: true,
         lastName: true,
         isActive: true,
-        role: {
+        roles: {
           select: {
-            id: true,
-            name: true,
+            role: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
         },
       },
@@ -337,8 +381,8 @@ export class UserService {
       where: { id },
       data: {
         password: hashedPassword,
-        failedLoginAttempts: 0,
-        accountLockedUntil: null,
+        failedLoginCount: 0,
+        lockedUntil: null,
       },
     });
 
