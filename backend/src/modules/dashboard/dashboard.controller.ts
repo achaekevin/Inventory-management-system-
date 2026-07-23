@@ -5,6 +5,49 @@ import { AuthRequest } from '../../common/middleware/authenticate';
 
 export class DashboardController {
   /**
+   * Get main dashboard overview
+   */
+  async getDashboardOverview(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const [stats, recentSales, topProducts, lowStockAlerts, salesChartData] = await Promise.all([
+        dashboardService.getDashboardStats(),
+        dashboardService.getRecentSales(5),
+        dashboardService.getTopSellingProducts(5),
+        dashboardService.getLowStockAlerts(5),
+        dashboardService.getSalesChartData(30),
+      ]);
+      ResponseHandler.success(
+        res,
+        {
+          stats: {
+            totalProducts: stats.inventory.totalProducts,
+            totalInventoryValue: stats.inventory.totalValue,
+            totalRevenue: stats.sales.thisMonth.amount,
+            totalProfit: stats.sales.thisMonth.amount * 0.3, // estimated profit
+            totalExpenses: stats.purchases.thisMonth.amount,
+            pendingOrders: stats.sales.pendingCount || 0,
+            lowStockItems: stats.inventory.lowStock,
+            outOfStockItems: stats.inventory.outOfStock,
+            totalCustomers: stats.customers.total,
+            totalSuppliers: stats.suppliers?.total || 0,
+          },
+          salesChart: salesChartData.map((d: any) => ({ label: d.label || d.date, value: d.value || d.amount || 0 })),
+          revenueChart: salesChartData.map((d: any) => ({ label: d.label || d.date, value: d.value || d.amount || 0 })),
+          categoryChart: [
+            { label: 'General', value: 100 },
+          ],
+          recentSales,
+          topProducts,
+          lowStockItems: lowStockAlerts,
+        },
+        'Dashboard data retrieved successfully'
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Get dashboard statistics
    */
   async getDashboardStats(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
