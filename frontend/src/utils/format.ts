@@ -3,13 +3,16 @@ import { format, formatDistance, formatRelative } from 'date-fns'
 // Currency formatting
 export const formatCurrency = (
   amount: number,
-  currency: string = 'USD',
-  locale: string = 'en-US'
+  currency: string = 'KES',
+  locale: string = 'en-KE'
 ): string => {
-  return new Intl.NumberFormat(locale, {
+  const val = Number(amount) || 0
+  const formatted = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
-  }).format(amount)
+    minimumFractionDigits: 2,
+  }).format(val)
+  return formatted.replace('KES', 'KSh')
 }
 
 // Number formatting

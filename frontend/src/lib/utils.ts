@@ -5,11 +5,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatCurrency(amount: number, currency: string = "USD"): string {
-  return new Intl.NumberFormat("en-US", {
+export function formatCurrency(amount: number, currency: string = "KES"): string {
+  const val = Number(amount) || 0
+  const formatted = new Intl.NumberFormat("en-KE", {
     style: "currency",
     currency,
-  }).format(amount)
+    minimumFractionDigits: 2,
+  }).format(val)
+  return formatted.replace("KES", "KSh")
 }
 
 export function formatDate(date: Date | string, format: string = "PPP"): string {

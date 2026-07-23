@@ -47,108 +47,24 @@ export function DashboardPage() {
   }
 
   const stats = dashboardData?.stats || {
-    totalProducts: 1234,
-    totalInventoryValue: 45678.90,
-    totalRevenue: 98765.43,
-    totalProfit: 23456.78,
-    totalExpenses: 12345.67,
-    pendingOrders: 45,
-    lowStockItems: 12,
-    outOfStockItems: 3,
-    totalCustomers: 567,
-    totalSuppliers: 89,
+    totalProducts: 0,
+    totalInventoryValue: 0,
+    totalRevenue: 0,
+    totalProfit: 0,
+    totalExpenses: 0,
+    pendingOrders: 0,
+    lowStockItems: 0,
+    outOfStockItems: 0,
+    totalCustomers: 0,
+    totalSuppliers: 0,
   }
 
-  const salesChartData = dashboardData?.salesChart || [
-    { label: 'Jan', value: 4000 },
-    { label: 'Feb', value: 3000 },
-    { label: 'Mar', value: 5000 },
-    { label: 'Apr', value: 4500 },
-    { label: 'May', value: 6000 },
-    { label: 'Jun', value: 5500 },
-  ]
-
-  const revenueChartData = dashboardData?.revenueChart || [
-    { label: 'Jan', value: 12000 },
-    { label: 'Feb', value: 19000 },
-    { label: 'Mar', value: 15000 },
-    { label: 'Apr', value: 22000 },
-    { label: 'May', value: 18000 },
-    { label: 'Jun', value: 25000 },
-  ]
-
-  const categoryChartData = dashboardData?.categoryChart || [
-    { label: 'Electronics', value: 35 },
-    { label: 'Clothing', value: 25 },
-    { label: 'Food', value: 20 },
-    { label: 'Books', value: 15 },
-    { label: 'Others', value: 5 },
-  ]
-
-  const recentSales = dashboardData?.recentSales || [
-    {
-      id: '1',
-      customerName: 'John Doe',
-      customerEmail: 'john@example.com',
-      amount: 1250.00,
-      time: '2 hours ago',
-    },
-    {
-      id: '2',
-      customerName: 'Jane Smith',
-      customerEmail: 'jane@example.com',
-      amount: 890.50,
-      time: '4 hours ago',
-    },
-    {
-      id: '3',
-      customerName: 'Bob Johnson',
-      customerEmail: 'bob@example.com',
-      amount: 2100.00,
-      time: '6 hours ago',
-    },
-  ]
-
-  const topProducts = dashboardData?.topProducts || [
-    {
-      id: '1',
-      name: 'Wireless Headphones',
-      category: 'Electronics',
-      quantity: 245,
-      revenue: 12250,
-    },
-    {
-      id: '2',
-      name: 'Smart Watch',
-      category: 'Electronics',
-      quantity: 198,
-      revenue: 39600,
-    },
-    {
-      id: '3',
-      name: 'Running Shoes',
-      category: 'Clothing',
-      quantity: 156,
-      revenue: 11700,
-    },
-  ]
-
-  const lowStockItems = dashboardData?.lowStockItems || [
-    {
-      id: '1',
-      name: 'Wireless Mouse',
-      currentStock: 5,
-      minStock: 20,
-      sku: 'WM-001',
-    },
-    {
-      id: '2',
-      name: 'USB Cable',
-      currentStock: 8,
-      minStock: 50,
-      sku: 'UC-002',
-    },
-  ]
+  const salesChartData = dashboardData?.salesChart || []
+  const revenueChartData = dashboardData?.revenueChart || []
+  const categoryChartData = dashboardData?.categoryChart || []
+  const recentSales = dashboardData?.recentSales || []
+  const topProducts = dashboardData?.topProducts || []
+  const lowStockItems = dashboardData?.lowStockItems || []
 
   return (
     <div className="space-y-6">

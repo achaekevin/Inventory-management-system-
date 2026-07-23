@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Package } from 'lucide-react'
+import { formatCurrency } from '@/utils/format'
 
 interface Product {
   id: string
@@ -51,7 +52,7 @@ export function TopProducts({
                 <div className="text-right">
                   <p className="text-sm font-medium">{product.quantity} sold</p>
                   <p className="text-xs text-muted-foreground">
-                    ${product.revenue.toLocaleString()}
+                    {formatCurrency(product.revenue)}
                   </p>
                 </div>
               </div>
