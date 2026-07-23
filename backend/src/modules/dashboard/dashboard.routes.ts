@@ -8,6 +8,13 @@ const router = Router();
 // All routes require authentication
 router.use(authenticate);
 
+// Get main dashboard overview
+router.get(
+  '/',
+  authorize('dashboard', 'read'),
+  dashboardController.getDashboardOverview
+);
+
 // Get dashboard statistics
 router.get(
   '/stats',
