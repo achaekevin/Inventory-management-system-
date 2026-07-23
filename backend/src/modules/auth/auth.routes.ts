@@ -23,6 +23,7 @@ router.post('/reset-password', validate(resetPasswordSchema), authController.res
 // Protected routes
 router.post('/logout', authenticate, authController.logout);
 router.put('/change-password', authenticate, validate(changePasswordSchema), authController.changePassword);
+router.put('/profile', authenticate, authController.updateProfile);
 router.get('/me', authenticate, authController.getCurrentUser);
 
 export default router;

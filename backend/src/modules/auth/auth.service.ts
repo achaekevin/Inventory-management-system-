@@ -384,6 +384,56 @@ export class AuthService {
     });
   }
 
+  /**
+   * Update current user profile
+   */
+  async updateProfile(
+    userId: string,
+    data: { firstName?: string; lastName?: string; phone?: string; avatar?: string }
+  ) {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(data.firstName && { firstName: data.firstName }),
+        ...(data.lastName && { lastName: data.lastName }),
+        ...(data.phone !== undefined && { phone: data.phone }),
+        ...(data.avatar !== undefined && { avatar: data.avatar }),
+      },
+      include: {
+        roles: {
+          include: {
+            role: {
+              include: {
+                permissions: {
+                  include: {
+                    permission: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const permissions = updatedUser.roles.flatMap((ur) =>
+      ur.role.permissions.map((rp) => `${rp.permission.module}.${rp.permission.action}`)
+    );
+
+    return {
+      id: updatedUser.id,
+      email: updatedUser.email,
+      firstName: updatedUser.firstName,
+      lastName: updatedUser.lastName,
+      phone: updatedUser.phone,
+      avatar: updatedUser.avatar,
+      roles: updatedUser.roles.map((ur) => ur.role.slug),
+      permissions: [...new Set(permissions)],
+      isActive: updatedUser.isActive,
+      createdAt: updatedUser.createdAt,
+    };
+  }
+
   private parseDevice(userAgent: string): string {
     if (/mobile/i.test(userAgent)) return 'Mobile';
     if (/tablet/i.test(userAgent)) return 'Tablet';

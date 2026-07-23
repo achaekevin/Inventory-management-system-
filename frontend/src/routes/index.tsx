@@ -22,13 +22,12 @@ import { SalesListPage, POSPage } from '@/features/sales/pages'
 import { ReportsPage } from '@/features/reports/pages'
 import { UsersListPage } from '@/features/users/pages'
 import { SettingsPage } from '@/features/settings/pages'
+import { ProfilePage } from '@/features/profile/pages/profile-page'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const token = localStorage.getItem('auth_token')
-  const isAuthenticated = Boolean(token && token !== 'undefined' && token !== 'null')
-  
-  if (!isAuthenticated) {
+  const token = localStorage.getItem('accessToken')
+  if (!token || token === 'undefined' || token === 'null') {
     return <Navigate to="/login" replace />
   }
   
@@ -216,7 +215,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'profile',
-        element: <div className="p-6">Profile Module - Coming Soon</div>,
+        element: <ProfilePage />,
       },
     ],
   },
