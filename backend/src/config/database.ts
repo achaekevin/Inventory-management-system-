@@ -18,9 +18,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Graceful shutdown
-process.on('beforeExit', async () => {
+const handleShutdown = async () => {
   await prisma.$disconnect();
   logger.info('Database disconnected');
-});
+};
+
+process.on('SIGINT', handleShutdown);
+process.on('SIGTERM', handleShutdown);
 
 export default prisma;
