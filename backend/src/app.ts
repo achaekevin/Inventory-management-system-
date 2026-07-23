@@ -84,15 +84,30 @@ if (config.NODE_ENV === 'development') {
   }));
 }
 
-// Rate limiting
-const limiter = rateLimit({
+// Global Rate Limiter - applies to all endpoints
+const globalLimiter = rateLimit({
   windowMs: Number(config.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
   max: Number(config.RATE_LIMIT_MAX_REQUESTS) || 100,
   standardHeaders: true,
   legacyHeaders: false,
-  message: 'Too many requests from this IP, please try again later.',
+  message: {
+    status: 'fail',
+    message: 'Too many requests from this IP, please try again later.',
+  },
 });
-app.use('/api', limiter);
+app.use(globalLimiter);
+
+// Strict Rate Limiter for Authentication routes - Maximum 5 attempts per 15 minutes
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Maximum 5 attempts per 15 minutes
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 'fail',
+    message: 'Too many authentication attempts. Please try again after 15 minutes.',
+  },
+});
 
 // Health check endpoint
 app.get('/health', (_req: Request, res: Response) => {
@@ -106,7 +121,7 @@ app.get('/health', (_req: Request, res: Response) => {
 });
 
 // API routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/categories', categoryRoutes);

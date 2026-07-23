@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import rateLimit from 'express-rate-limit';
 import authController from './auth.controller';
 import { validate } from '../../common/middleware/validate';
 import { authenticate } from '../../common/middleware/authenticate';
@@ -12,6 +13,20 @@ import {
 } from './auth.validator';
 
 const router = Router();
+
+// Strict Rate Limiter for Authentication routes - Maximum 5 attempts per 15 minutes
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Maximum 5 attempts per 15 minutes
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 'fail',
+    message: 'Too many authentication attempts. Please try again after 15 minutes.',
+  },
+});
+
+router.use(authLimiter);
 
 // Public routes
 router.post('/register', validate(registerSchema), authController.register);
