@@ -25,6 +25,7 @@ import { SettingsPage } from '@/features/settings/pages'
 import { ProfilePage } from '@/features/profile/pages/profile-page'
 import { PaymentsListPage } from '@/features/payments/pages'
 import { WarehousesListPage } from '@/features/warehouses/pages'
+import { SmartReorderPage } from '@/features/reorder/pages/smart-reorder-page'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -215,6 +216,12 @@ export const router = createBrowserRouter([
         path: 'notifications',
         element: <div className="p-6">Notifications Module - Coming Soon</div>,
       },
+      // Smart Reorder
+      {
+        path: 'reorder',
+        element: <SmartReorderPage />,
+      },
+      // Profile
       {
         path: 'profile',
         element: <ProfilePage />,

@@ -15,6 +15,7 @@ import {
   CreditCard,
   BarChart3,
   UserCog,
+  Zap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/store/ui-store'
@@ -86,6 +87,11 @@ const navigation: NavItem[] = [
     title: 'Reports',
     href: '/reports',
     icon: BarChart3,
+  },
+  {
+    title: 'Smart Reorder',
+    href: '/reorder',
+    icon: Zap,
   },
   {
     title: 'Users',
