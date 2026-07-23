@@ -385,20 +385,46 @@ export class AuthService {
   }
 
   /**
-   * Update current user profile
+   * Update current user profile details & credentials
    */
   async updateProfile(
     userId: string,
-    data: { firstName?: string; lastName?: string; phone?: string; avatar?: string }
+    data: { 
+      firstName?: string; 
+      lastName?: string; 
+      email?: string; 
+      phone?: string; 
+      avatar?: string;
+      password?: string;
+    }
   ) {
+    const updateData: any = {};
+
+    if (data.firstName) updateData.firstName = data.firstName;
+    if (data.lastName) updateData.lastName = data.lastName;
+    if (data.phone !== undefined) updateData.phone = data.phone;
+    if (data.avatar !== undefined) updateData.avatar = data.avatar;
+
+    if (data.email) {
+      const existingUser = await prisma.user.findFirst({
+        where: {
+          email: data.email,
+          id: { not: userId },
+        },
+      });
+      if (existingUser) {
+        throw new ConflictError('Email address is already in use by another user');
+      }
+      updateData.email = data.email;
+    }
+
+    if (data.password) {
+      updateData.password = await bcrypt.hash(data.password, config.BCRYPT_ROUNDS);
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data: {
-        ...(data.firstName && { firstName: data.firstName }),
-        ...(data.lastName && { lastName: data.lastName }),
-        ...(data.phone !== undefined && { phone: data.phone }),
-        ...(data.avatar !== undefined && { avatar: data.avatar }),
-      },
+      data: updateData,
       include: {
         roles: {
           include: {

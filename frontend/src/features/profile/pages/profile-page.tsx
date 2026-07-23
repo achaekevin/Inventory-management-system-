@@ -34,6 +34,7 @@ export function ProfilePage() {
   // Personal Info Form State
   const [firstName, setFirstName] = useState(user?.firstName || '')
   const [lastName, setLastName] = useState(user?.lastName || '')
+  const [email, setEmail] = useState(user?.email || '')
   const [phone, setPhone] = useState(user?.phone || '')
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false)
   const [profileSuccessMsg, setProfileSuccessMsg] = useState('')
@@ -58,6 +59,7 @@ export function ProfilePage() {
       const response = await apiClient.put('/auth/profile', {
         firstName,
         lastName,
+        email,
         phone,
       })
 
@@ -68,11 +70,12 @@ export function ProfilePage() {
           ...user,
           firstName,
           lastName,
+          email,
           phone,
         })
       }
 
-      setProfileSuccessMsg('Your profile details have been updated successfully!')
+      setProfileSuccessMsg('Your profile and login email details have been saved to the database!')
     } catch (err: any) {
       setProfileErrorMsg(err.response?.data?.message || 'Failed to update profile details.')
     } finally {
@@ -104,7 +107,7 @@ export function ProfilePage() {
         newPassword,
       })
 
-      setPasswordSuccessMsg('Password changed successfully!')
+      setPasswordSuccessMsg('New password saved to database! You can now use your new password whenever logging in.')
       setOldPassword('')
       setNewPassword('')
       setConfirmPassword('')
@@ -228,15 +231,16 @@ export function ProfilePage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
+                    <Label htmlFor="email">Login Email Address</Label>
                     <Input
                       id="email"
                       type="email"
-                      value={user?.email || ''}
-                      disabled
-                      className="bg-muted opacity-80 cursor-not-allowed"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="user@example.com"
+                      required
                     />
-                    <p className="text-xs text-muted-foreground">Email cannot be changed directly.</p>
+                    <p className="text-xs text-muted-foreground">Updating your email changes your system login credential.</p>
                   </div>
 
                   <div className="space-y-2">
