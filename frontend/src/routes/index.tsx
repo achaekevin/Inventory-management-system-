@@ -24,6 +24,7 @@ import { UsersListPage } from '@/features/users/pages'
 import { SettingsPage } from '@/features/settings/pages'
 import { ProfilePage } from '@/features/profile/pages/profile-page'
 import { PaymentsListPage } from '@/features/payments/pages'
+import { WarehousesListPage } from '@/features/warehouses/pages'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -201,10 +202,10 @@ export const router = createBrowserRouter([
         path: 'settings',
         element: <SettingsPage />,
       },
-      // Placeholder routes
+      // Warehouses
       {
         path: 'warehouses',
-        element: <div className="p-6">Warehouses Module - Coming Soon</div>,
+        element: <WarehousesListPage />,
       },
       {
         path: 'payments',

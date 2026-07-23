@@ -1,1 +1,1 @@
-export { WarehousesListPage } from './warehouses-list-page';
+export { WarehousesListPage } from './warehouses-list-page'
