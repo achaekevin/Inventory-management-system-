@@ -47,9 +47,19 @@ app.use(helmet({
 }));
 
 // CORS configuration
-const corsOptions = {
-  origin: config.CORS_ORIGIN?.split(',') || ['http://localhost:3000', 'http://localhost:3003'],
-  credentials: config.CORS_CREDENTIALS === 'true',
+const allowedOrigins = (config.CORS_ORIGIN || 'http://localhost:3000,http://localhost:3003')
+  .split(',')
+  .map((o) => o.trim());
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    // Allow non-browser requests or any localhost origin during development
+    if (!origin || config.NODE_ENV === 'development' || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
