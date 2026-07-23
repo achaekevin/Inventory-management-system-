@@ -22,7 +22,7 @@ export class ProductController {
       };
 
       const result = await productService.getProducts(filters);
-      ResponseHandler.success(res, result.data, 'Products retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Products retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -33,7 +33,8 @@ export class ProductController {
    */
   async getProductById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const product = await productService.getProductById(req.params.id);
+      const productId = (req.params as any).id;
+      const product = await productService.getProductById(productId);
       ResponseHandler.success(res, product, 'Product retrieved successfully');
     } catch (error) {
       next(error);
@@ -59,7 +60,8 @@ export class ProductController {
   async updateProduct(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const product = await productService.updateProduct(req.params.id, req.body, userId);
+      const productId = (req.params as any).id;
+      const product = await productService.updateProduct(productId, req.body, userId);
       ResponseHandler.success(res, product, 'Product updated successfully');
     } catch (error) {
       next(error);
@@ -72,7 +74,8 @@ export class ProductController {
   async deleteProduct(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await productService.deleteProduct(req.params.id, userId);
+      const productId = (req.params as any).id;
+      await productService.deleteProduct(productId, userId);
       ResponseHandler.success(res, null, 'Product deleted successfully');
     } catch (error) {
       next(error);
@@ -85,7 +88,8 @@ export class ProductController {
   async restoreProduct(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const product = await productService.restoreProduct(req.params.id, userId);
+      const productId = (req.params as any).id;
+      const product = await productService.restoreProduct(productId, userId);
       ResponseHandler.success(res, product, 'Product restored successfully');
     } catch (error) {
       next(error);
@@ -95,7 +99,7 @@ export class ProductController {
   /**
    * Get low stock products
    */
-  async getLowStockProducts(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+  async getLowStockProducts(_req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const products = await productService.getLowStockProducts();
       ResponseHandler.success(res, products, 'Low stock products retrieved');
@@ -109,7 +113,8 @@ export class ProductController {
    */
   async getProductStockSummary(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const summary = await productService.getProductStockSummary(req.params.id);
+      const productId = (req.params as any).id;
+      const summary = await productService.getProductStockSummary(productId);
       ResponseHandler.success(res, summary, 'Stock summary retrieved successfully');
     } catch (error) {
       next(error);

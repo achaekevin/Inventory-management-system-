@@ -14,7 +14,7 @@ export class BrandController {
       };
 
       const result = await brandService.getBrands(filters);
-      ResponseHandler.success(res, result.data, 'Brands retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Brands retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -22,7 +22,8 @@ export class BrandController {
 
   async getBrandById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const brand = await brandService.getBrandById(req.params.id);
+      const brandId = (req.params as any).id;
+      const brand = await brandService.getBrandById(brandId);
       ResponseHandler.success(res, brand, 'Brand retrieved successfully');
     } catch (error) {
       next(error);
@@ -42,7 +43,8 @@ export class BrandController {
   async updateBrand(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const brand = await brandService.updateBrand(req.params.id, req.body, userId);
+      const brandId = (req.params as any).id;
+      const brand = await brandService.updateBrand(brandId, req.body, userId);
       ResponseHandler.success(res, brand, 'Brand updated successfully');
     } catch (error) {
       next(error);
@@ -52,7 +54,8 @@ export class BrandController {
   async deleteBrand(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await brandService.deleteBrand(req.params.id, userId);
+      const brandId = (req.params as any).id;
+      await brandService.deleteBrand(brandId, userId);
       ResponseHandler.success(res, null, 'Brand deleted successfully');
     } catch (error) {
       next(error);
@@ -62,7 +65,8 @@ export class BrandController {
   async restoreBrand(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const brand = await brandService.restoreBrand(req.params.id, userId);
+      const brandId = (req.params as any).id;
+      const brand = await brandService.restoreBrand(brandId, userId);
       ResponseHandler.success(res, brand, 'Brand restored successfully');
     } catch (error) {
       next(error);

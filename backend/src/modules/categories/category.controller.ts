@@ -18,7 +18,7 @@ export class CategoryController {
       };
 
       const result = await categoryService.getCategories(filters);
-      ResponseHandler.success(res, result.data, 'Categories retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Categories retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -27,7 +27,7 @@ export class CategoryController {
   /**
    * Get category tree
    */
-  async getCategoryTree(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+  async getCategoryTree(_req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const tree = await categoryService.getCategoryTree();
       ResponseHandler.success(res, tree, 'Category tree retrieved successfully');
@@ -41,7 +41,8 @@ export class CategoryController {
    */
   async getCategoryById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const category = await categoryService.getCategoryById(req.params.id);
+      const categoryId = (req.params as any).id;
+      const category = await categoryService.getCategoryById(categoryId);
       ResponseHandler.success(res, category, 'Category retrieved successfully');
     } catch (error) {
       next(error);
@@ -67,7 +68,8 @@ export class CategoryController {
   async updateCategory(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const category = await categoryService.updateCategory(req.params.id, req.body, userId);
+      const categoryId = (req.params as any).id;
+      const category = await categoryService.updateCategory(categoryId, req.body, userId);
       ResponseHandler.success(res, category, 'Category updated successfully');
     } catch (error) {
       next(error);
@@ -80,7 +82,8 @@ export class CategoryController {
   async deleteCategory(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await categoryService.deleteCategory(req.params.id, userId);
+      const categoryId = (req.params as any).id;
+      await categoryService.deleteCategory(categoryId, userId);
       ResponseHandler.success(res, null, 'Category deleted successfully');
     } catch (error) {
       next(error);
@@ -93,7 +96,8 @@ export class CategoryController {
   async restoreCategory(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const category = await categoryService.restoreCategory(req.params.id, userId);
+      const categoryId = (req.params as any).id;
+      const category = await categoryService.restoreCategory(categoryId, userId);
       ResponseHandler.success(res, category, 'Category restored successfully');
     } catch (error) {
       next(error);

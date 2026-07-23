@@ -1,5 +1,5 @@
 import prisma from '../../config/database';
-import { NotFoundError, ConflictError, BadRequestError } from '../../common/errors/AppError';
+import { NotFoundError, BadRequestError } from '../../common/errors/AppError';
 import { slugify, generateUniqueSlug } from '../../common/utilities/slugify';
 import { getPaginationParams, PaginationParams } from '../../common/utilities/pagination';
 import logger from '../../config/logger';
@@ -354,14 +354,14 @@ export class CategoryService {
     let currentId: string | null = categoryId;
 
     while (currentId) {
-      const category = await prisma.category.findUnique({
+      const currentCat: { parentId: string | null } | null = await prisma.category.findUnique({
         where: { id: currentId },
         select: { parentId: true },
       });
 
-      if (!category || !category.parentId) break;
+      if (!currentCat || !currentCat.parentId) break;
 
-      currentId = category.parentId;
+      currentId = currentCat.parentId;
       depth++;
 
       // Safety limit
@@ -381,14 +381,14 @@ export class CategoryService {
     while (currentId && iterations < 10) {
       if (currentId === ancestorId) return true;
 
-      const category = await prisma.category.findUnique({
+      const currentCat: { parentId: string | null } | null = await prisma.category.findUnique({
         where: { id: currentId },
         select: { parentId: true },
       });
 
-      if (!category || !category.parentId) break;
+      if (!currentCat || !currentCat.parentId) break;
 
-      currentId = category.parentId;
+      currentId = currentCat.parentId;
       iterations++;
     }
 

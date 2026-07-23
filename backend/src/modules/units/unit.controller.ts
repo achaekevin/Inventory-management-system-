@@ -14,7 +14,7 @@ export class UnitController {
       };
 
       const result = await unitService.getUnits(filters);
-      ResponseHandler.success(res, result.data, 'Units retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Units retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -22,7 +22,8 @@ export class UnitController {
 
   async getUnitById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const unit = await unitService.getUnitById(req.params.id);
+      const unitId = (req.params as any).id;
+      const unit = await unitService.getUnitById(unitId);
       ResponseHandler.success(res, unit, 'Unit retrieved successfully');
     } catch (error) {
       next(error);
@@ -42,7 +43,8 @@ export class UnitController {
   async updateUnit(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const unit = await unitService.updateUnit(req.params.id, req.body, userId);
+      const unitId = (req.params as any).id;
+      const unit = await unitService.updateUnit(unitId, req.body, userId);
       ResponseHandler.success(res, unit, 'Unit updated successfully');
     } catch (error) {
       next(error);
@@ -52,7 +54,8 @@ export class UnitController {
   async deleteUnit(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await unitService.deleteUnit(req.params.id, userId);
+      const unitId = (req.params as any).id;
+      await unitService.deleteUnit(unitId, userId);
       ResponseHandler.success(res, null, 'Unit deleted successfully');
     } catch (error) {
       next(error);
@@ -62,7 +65,8 @@ export class UnitController {
   async restoreUnit(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const unit = await unitService.restoreUnit(req.params.id, userId);
+      const unitId = (req.params as any).id;
+      const unit = await unitService.restoreUnit(unitId, userId);
       ResponseHandler.success(res, unit, 'Unit restored successfully');
     } catch (error) {
       next(error);

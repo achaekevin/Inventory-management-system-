@@ -6,6 +6,7 @@ import logger from '../../config/logger';
 export interface CreateUnitDto {
   name: string;
   shortName: string;
+  description?: string;
   baseUnitId?: string;
   conversionFactor?: number;
 }
@@ -44,13 +45,6 @@ export class UnitService {
         skip,
         take,
         include: {
-          baseUnit: {
-            select: { id: true, name: true, shortName: true },
-          },
-          derivedUnits: {
-            where: { deletedAt: null },
-            select: { id: true, name: true, shortName: true, conversionFactor: true },
-          },
           _count: {
             select: { products: true },
           },
@@ -78,10 +72,6 @@ export class UnitService {
     const unit = await prisma.unit.findUnique({
       where: { id },
       include: {
-        baseUnit: true,
-        derivedUnits: {
-          where: { deletedAt: null },
-        },
         _count: {
           select: { products: true },
         },
@@ -99,31 +89,11 @@ export class UnitService {
    * Create new unit
    */
   async createUnit(data: CreateUnitDto, userId: string) {
-    // Validate base unit if provided
-    if (data.baseUnitId) {
-      const baseUnit = await prisma.unit.findUnique({
-        where: { id: data.baseUnitId },
-      });
-
-      if (!baseUnit || baseUnit.deletedAt) {
-        throw new BadRequestError('Base unit not found');
-      }
-
-      // Require conversion factor for derived units
-      if (!data.conversionFactor || data.conversionFactor <= 0) {
-        throw new BadRequestError('Conversion factor must be greater than 0 for derived units');
-      }
-    }
-
     const unit = await prisma.unit.create({
       data: {
         name: data.name,
         shortName: data.shortName,
-        baseUnitId: data.baseUnitId,
-        conversionFactor: data.conversionFactor,
-      },
-      include: {
-        baseUnit: true,
+        description: data.description,
       },
     });
 
@@ -141,42 +111,11 @@ export class UnitService {
   async updateUnit(id: string, data: UpdateUnitDto, userId: string) {
     const existingUnit = await this.getUnitById(id);
 
-    // Validate base unit if being updated
-    if (data.baseUnitId) {
-      // Prevent setting self as base unit
-      if (data.baseUnitId === id) {
-        throw new BadRequestError('Unit cannot be its own base unit');
-      }
-
-      const baseUnit = await prisma.unit.findUnique({
-        where: { id: data.baseUnitId },
-      });
-
-      if (!baseUnit || baseUnit.deletedAt) {
-        throw new BadRequestError('Base unit not found');
-      }
-
-      // Check for circular reference
-      const isCircular = await this.hasCircularReference(data.baseUnitId, id);
-      if (isCircular) {
-        throw new BadRequestError('Cannot set base unit: circular reference detected');
-      }
-
-      // Require conversion factor
-      if (!data.conversionFactor || data.conversionFactor <= 0) {
-        throw new BadRequestError('Conversion factor must be greater than 0 for derived units');
-      }
-    }
+    const { baseUnitId, conversionFactor, ...updateData } = data;
 
     const unit = await prisma.unit.update({
       where: { id },
-      data,
-      include: {
-        baseUnit: true,
-        derivedUnits: {
-          where: { deletedAt: null },
-        },
-      },
+      data: updateData,
     });
 
     // Create audit log
@@ -207,20 +146,6 @@ export class UnitService {
       );
     }
 
-    // Check if unit has derived units
-    const derivedCount = await prisma.unit.count({
-      where: {
-        baseUnitId: id,
-        deletedAt: null,
-      },
-    });
-
-    if (derivedCount > 0) {
-      throw new BadRequestError(
-        `Cannot delete unit with ${derivedCount} derived unit(s). Please delete or reassign derived units first.`
-      );
-    }
-
     const deletedUnit = await prisma.unit.update({
       where: { id },
       data: { deletedAt: new Date() },
@@ -248,23 +173,9 @@ export class UnitService {
       throw new BadRequestError('Unit is not deleted');
     }
 
-    // Check if base unit exists (if has base unit)
-    if (unit.baseUnitId) {
-      const baseUnit = await prisma.unit.findUnique({
-        where: { id: unit.baseUnitId },
-      });
-
-      if (!baseUnit || baseUnit.deletedAt) {
-        throw new BadRequestError('Cannot restore unit: base unit does not exist or is deleted');
-      }
-    }
-
     const restoredUnit = await prisma.unit.update({
       where: { id },
       data: { deletedAt: null },
-      include: {
-        baseUnit: true,
-      },
     });
 
     // Create audit log
@@ -273,30 +184,6 @@ export class UnitService {
     logger.info(`Unit restored: ${restoredUnit.name} (${restoredUnit.shortName})`);
 
     return restoredUnit;
-  }
-
-  /**
-   * Check for circular reference in unit chain
-   */
-  private async hasCircularReference(baseUnitId: string, unitId: string): Promise<boolean> {
-    let currentId: string | null = baseUnitId;
-    let iterations = 0;
-
-    while (currentId && iterations < 10) {
-      if (currentId === unitId) return true;
-
-      const unit = await prisma.unit.findUnique({
-        where: { id: currentId },
-        select: { baseUnitId: true },
-      });
-
-      if (!unit || !unit.baseUnitId) break;
-
-      currentId = unit.baseUnitId;
-      iterations++;
-    }
-
-    return false;
   }
 
   /**
