@@ -2,6 +2,7 @@ import { Outlet } from 'react-router'
 import { Sidebar } from '@/components/layout/sidebar'
 import { Header } from '@/components/layout/header'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { CommandPalette } from '@/components/shared/command-palette'
 import { useUIStore } from '@/store/ui-store'
 import { cn } from '@/lib/utils'
 
@@ -45,6 +46,7 @@ export function MainLayout() {
           </div>
         </footer>
       </div>
+      <CommandPalette />
     </div>
   )
 }
