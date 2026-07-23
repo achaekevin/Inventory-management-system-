@@ -36,12 +36,13 @@ export interface User {
   lastName: string
   phone?: string
   avatar?: string
-  role: UserRole
-  permissions: Permission[]
-  isActive: boolean
+  role?: string
+  roles?: string[]
+  permissions?: string[]
+  isActive?: boolean
   lastLogin?: Date
-  createdAt: Date
-  updatedAt: Date
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export type UserRole = 'admin' | 'manager' | 'staff' | 'viewer'

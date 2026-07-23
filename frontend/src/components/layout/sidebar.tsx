@@ -18,9 +18,10 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/store/ui-store'
+import { useAuth } from '@/features/auth/hooks/use-auth'
+import { isAllowedRoute, isSuperAdmin } from '@/utils/permissions'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
 
 interface NavItem {
   title: string
@@ -101,6 +102,12 @@ const navigation: NavItem[] = [
 export function Sidebar() {
   const location = useLocation()
   const { isSidebarCollapsed, toggleSidebarCollapse } = useUIStore()
+  const { user } = useAuth()
+
+  const filteredNavigation = navigation.filter((item) => {
+    if (isSuperAdmin(user)) return true
+    return isAllowedRoute(user, item.href)
+  })
 
   return (
     <aside
@@ -131,7 +138,7 @@ export function Sidebar() {
       {/* Navigation */}
       <ScrollArea className="flex-1 px-3 py-4">
         <nav className="space-y-1">
-          {navigation.map((item) => {
+          {filteredNavigation.map((item) => {
             const isActive = location.pathname === item.href || 
                            location.pathname.startsWith(item.href + '/')
             const Icon = item.icon
