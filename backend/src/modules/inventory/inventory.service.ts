@@ -179,7 +179,6 @@ export class InventoryService {
         quantity: 0,
         available: 0,
         reserved: 0,
-        costPerUnit: product.cost,
       },
       include: {
         product: true,
@@ -243,13 +242,6 @@ export class InventoryService {
     const newQuantity = inventoryItem.quantity + quantityChange;
     const newAvailable = inventoryItem.available + quantityChange;
 
-    // Calculate new cost per unit (weighted average for increases)
-    let newCostPerUnit = inventoryItem.costPerUnit;
-    if (data.adjustmentType === 'increase' && data.costPerUnit) {
-      const totalCost = (inventoryItem.quantity * inventoryItem.costPerUnit) + (data.quantity * data.costPerUnit);
-      newCostPerUnit = totalCost / newQuantity;
-    }
-
     // Use transaction for atomicity
     const result = await prisma.$transaction(async (tx) => {
       // Update inventory item
@@ -263,7 +255,6 @@ export class InventoryService {
         data: {
           quantity: newQuantity,
           available: newAvailable,
-          costPerUnit: newCostPerUnit,
         },
       });
 
@@ -272,13 +263,11 @@ export class InventoryService {
         data: {
           productId: data.productId,
           warehouseId: data.warehouseId,
-          movementType: data.adjustmentType === 'increase' ? 'adjustment_in' : 'adjustment_out',
+          type: data.adjustmentType === 'increase' ? 'IN' : 'OUT',
           quantity: data.quantity,
-          costPerUnit: data.costPerUnit || inventoryItem.costPerUnit,
-          totalCost: data.quantity * (data.costPerUnit || inventoryItem.costPerUnit),
           reason: data.reason,
           notes: data.notes,
-          userId,
+          createdBy: userId,
         },
       });
 
@@ -293,12 +282,10 @@ export class InventoryService {
           oldValues: JSON.stringify({
             quantity: inventoryItem.quantity,
             available: inventoryItem.available,
-            costPerUnit: inventoryItem.costPerUnit,
           }),
           newValues: JSON.stringify({
             quantity: newQuantity,
             available: newAvailable,
-            costPerUnit: newCostPerUnit,
             adjustmentType: data.adjustmentType,
             reason: data.reason,
           }),
@@ -418,14 +405,12 @@ export class InventoryService {
         data: {
           productId: data.productId,
           warehouseId: data.fromWarehouseId,
-          movementType: 'transfer_out',
+          type: 'TRANSFER',
           quantity: data.quantity,
-          costPerUnit: fromItem.costPerUnit,
-          totalCost: data.quantity * fromItem.costPerUnit,
           reason: data.reason || 'Stock transfer',
           notes: data.notes,
           referenceId: data.toWarehouseId,
-          userId,
+          createdBy: userId,
         },
       });
 
@@ -434,14 +419,12 @@ export class InventoryService {
         data: {
           productId: data.productId,
           warehouseId: data.toWarehouseId,
-          movementType: 'transfer_in',
+          type: 'TRANSFER',
           quantity: data.quantity,
-          costPerUnit: fromItem.costPerUnit,
-          totalCost: data.quantity * fromItem.costPerUnit,
           reason: data.reason || 'Stock transfer',
           notes: data.notes,
           referenceId: data.fromWarehouseId,
-          userId,
+          createdBy: userId,
         },
       });
 
@@ -517,25 +500,11 @@ export class InventoryService {
         skip,
         take,
         include: {
-          product: {
-            select: {
-              id: true,
-              name: true,
-              sku: true,
-            },
-          },
           warehouse: {
             select: {
               id: true,
               name: true,
               code: true,
-            },
-          },
-          user: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
             },
           },
         },
@@ -544,8 +513,31 @@ export class InventoryService {
       prisma.stockMovement.count({ where }),
     ]);
 
+    const productIds = Array.from(new Set(movements.map((m) => m.productId)));
+    const userIds = Array.from(new Set(movements.map((m) => m.createdBy)));
+
+    const [products, users] = await Promise.all([
+      prisma.product.findMany({
+        where: { id: { in: productIds } },
+        select: { id: true, name: true, sku: true },
+      }),
+      prisma.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, firstName: true, lastName: true },
+      }),
+    ]);
+
+    const productMap = new Map(products.map((p) => [p.id, p]));
+    const userMap = new Map(users.map((u) => [u.id, u]));
+
+    const mappedMovements = movements.map((m) => ({
+      ...m,
+      product: productMap.get(m.productId) || null,
+      user: userMap.get(m.createdBy) || null,
+    }));
+
     return {
-      data: movements,
+      data: mappedMovements,
       pagination: {
         page,
         pageSize,
@@ -562,16 +554,7 @@ export class InventoryService {
     const movement = await prisma.stockMovement.findUnique({
       where: { id },
       include: {
-        product: true,
         warehouse: true,
-        user: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-        },
       },
     });
 
@@ -579,7 +562,22 @@ export class InventoryService {
       throw new NotFoundError('Stock movement not found');
     }
 
-    return movement;
+    const [product, user] = await Promise.all([
+      prisma.product.findUnique({
+        where: { id: movement.productId },
+        select: { id: true, name: true, sku: true },
+      }),
+      prisma.user.findUnique({
+        where: { id: movement.createdBy },
+        select: { id: true, firstName: true, lastName: true },
+      }),
+    ]);
+
+    return {
+      ...movement,
+      product,
+      user,
+    };
   }
 
   // ==================== STOCK RESERVATION ====================
@@ -587,7 +585,7 @@ export class InventoryService {
   /**
    * Reserve stock (for orders)
    */
-  async reserveStock(productId: string, warehouseId: string, quantity: number, userId: string) {
+  async reserveStock(productId: string, warehouseId: string, quantity: number, _userId: string) {
     const inventoryItem = await prisma.inventoryItem.findUnique({
       where: {
         productId_warehouseId: {
@@ -634,7 +632,7 @@ export class InventoryService {
   /**
    * Release reserved stock
    */
-  async releaseReservedStock(productId: string, warehouseId: string, quantity: number, userId: string) {
+  async releaseReservedStock(productId: string, warehouseId: string, quantity: number, _userId: string) {
     const inventoryItem = await prisma.inventoryItem.findUnique({
       where: {
         productId_warehouseId: {
@@ -726,12 +724,10 @@ export class InventoryService {
         data: {
           productId,
           warehouseId,
-          movementType: 'sale',
+          type: 'OUT',
           quantity,
-          costPerUnit: inventoryItem.costPerUnit,
-          totalCost: quantity * inventoryItem.costPerUnit,
           reason: 'Sale - stock consumed',
-          userId,
+          createdBy: userId,
         },
       });
 
@@ -767,21 +763,8 @@ export class InventoryService {
     let totalValue = 0;
 
     for (const item of items) {
-      let itemValue = 0;
-
-      switch (method) {
-        case 'WEIGHTED_AVERAGE':
-          itemValue = item.quantity * item.costPerUnit;
-          break;
-
-        case 'FIFO':
-        case 'LIFO':
-          // For FIFO/LIFO, we would need lot tracking which requires stock movement history
-          // For now, fall back to weighted average
-          itemValue = item.quantity * item.costPerUnit;
-          break;
-      }
-
+      const itemCost = Number(item.product.cost || 0);
+      const itemValue = item.quantity * itemCost;
       totalValue += itemValue;
     }
 
@@ -794,8 +777,7 @@ export class InventoryService {
         sku: item.product.sku,
         warehouse: item.warehouse.name,
         quantity: item.quantity,
-        costPerUnit: item.costPerUnit,
-        value: item.quantity * item.costPerUnit,
+        costPerUnit: Number(item.product.cost || 0),
       })),
     };
   }

@@ -6,7 +6,7 @@ export const stockAdjustmentSchema = z.object({
     productId: z.string().uuid('Invalid product ID'),
     warehouseId: z.string().uuid('Invalid warehouse ID'),
     adjustmentType: z.enum(['increase', 'decrease'], {
-      errorMap: () => ({ message: 'Adjustment type must be increase or decrease' }),
+      message: 'Adjustment type must be increase or decrease',
     }),
     quantity: z.number().int('Quantity must be an integer').positive('Quantity must be positive'),
     reason: z.string().min(3, 'Reason must be at least 3 characters'),

@@ -18,7 +18,7 @@ export class WarehouseController {
       };
 
       const result = await warehouseService.getWarehouses(filters);
-      ResponseHandler.success(res, result.data, 'Warehouses retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Warehouses retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -26,7 +26,8 @@ export class WarehouseController {
 
   async getWarehouseById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const warehouse = await warehouseService.getWarehouseById(req.params.id);
+      const warehouseId = (req.params as any).id;
+      const warehouse = await warehouseService.getWarehouseById(warehouseId);
       ResponseHandler.success(res, warehouse, 'Warehouse retrieved successfully');
     } catch (error) {
       next(error);
@@ -46,7 +47,8 @@ export class WarehouseController {
   async updateWarehouse(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const warehouse = await warehouseService.updateWarehouse(req.params.id, req.body, userId);
+      const warehouseId = (req.params as any).id;
+      const warehouse = await warehouseService.updateWarehouse(warehouseId, req.body, userId);
       ResponseHandler.success(res, warehouse, 'Warehouse updated successfully');
     } catch (error) {
       next(error);
@@ -56,7 +58,8 @@ export class WarehouseController {
   async deleteWarehouse(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await warehouseService.deleteWarehouse(req.params.id, userId);
+      const warehouseId = (req.params as any).id;
+      await warehouseService.deleteWarehouse(warehouseId, userId);
       ResponseHandler.success(res, null, 'Warehouse deleted successfully');
     } catch (error) {
       next(error);
@@ -66,7 +69,8 @@ export class WarehouseController {
   async restoreWarehouse(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const warehouse = await warehouseService.restoreWarehouse(req.params.id, userId);
+      const warehouseId = (req.params as any).id;
+      const warehouse = await warehouseService.restoreWarehouse(warehouseId, userId);
       ResponseHandler.success(res, warehouse, 'Warehouse restored successfully');
     } catch (error) {
       next(error);
@@ -75,7 +79,8 @@ export class WarehouseController {
 
   async getWarehouseCapacity(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const capacity = await warehouseService.getWarehouseCapacity(req.params.id);
+      const warehouseId = (req.params as any).id;
+      const capacity = await warehouseService.getWarehouseCapacity(warehouseId);
       ResponseHandler.success(res, capacity, 'Warehouse capacity retrieved successfully');
     } catch (error) {
       next(error);
@@ -92,8 +97,9 @@ export class WarehouseController {
         search: req.query.search as string,
       };
 
-      const result = await warehouseService.getZonesByWarehouse(req.params.warehouseId, filters);
-      ResponseHandler.success(res, result.data, 'Zones retrieved successfully', result.pagination);
+      const warehouseId = (req.params as any).warehouseId;
+      const result = await warehouseService.getZonesByWarehouse(warehouseId, filters);
+      ResponseHandler.success(res, result.data, 'Zones retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -101,7 +107,8 @@ export class WarehouseController {
 
   async getZoneById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const zone = await warehouseService.getZoneById(req.params.id);
+      const zoneId = (req.params as any).id;
+      const zone = await warehouseService.getZoneById(zoneId);
       ResponseHandler.success(res, zone, 'Zone retrieved successfully');
     } catch (error) {
       next(error);
@@ -121,7 +128,8 @@ export class WarehouseController {
   async updateZone(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const zone = await warehouseService.updateZone(req.params.id, req.body, userId);
+      const zoneId = (req.params as any).id;
+      const zone = await warehouseService.updateZone(zoneId, req.body, userId);
       ResponseHandler.success(res, zone, 'Zone updated successfully');
     } catch (error) {
       next(error);
@@ -131,7 +139,8 @@ export class WarehouseController {
   async deleteZone(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await warehouseService.deleteZone(req.params.id, userId);
+      const zoneId = (req.params as any).id;
+      await warehouseService.deleteZone(zoneId, userId);
       ResponseHandler.success(res, null, 'Zone deleted successfully');
     } catch (error) {
       next(error);
@@ -148,8 +157,9 @@ export class WarehouseController {
         search: req.query.search as string,
       };
 
-      const result = await warehouseService.getBinsByZone(req.params.zoneId, filters);
-      ResponseHandler.success(res, result.data, 'Bins retrieved successfully', result.pagination);
+      const zoneId = (req.params as any).zoneId;
+      const result = await warehouseService.getBinsByZone(zoneId, filters);
+      ResponseHandler.success(res, result.data, 'Bins retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -157,7 +167,8 @@ export class WarehouseController {
 
   async getBinById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const bin = await warehouseService.getBinById(req.params.id);
+      const binId = (req.params as any).id;
+      const bin = await warehouseService.getBinById(binId);
       ResponseHandler.success(res, bin, 'Bin retrieved successfully');
     } catch (error) {
       next(error);
@@ -177,7 +188,8 @@ export class WarehouseController {
   async updateBin(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const bin = await warehouseService.updateBin(req.params.id, req.body, userId);
+      const binId = (req.params as any).id;
+      const bin = await warehouseService.updateBin(binId, req.body, userId);
       ResponseHandler.success(res, bin, 'Bin updated successfully');
     } catch (error) {
       next(error);
@@ -187,7 +199,8 @@ export class WarehouseController {
   async deleteBin(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await warehouseService.deleteBin(req.params.id, userId);
+      const binId = (req.params as any).id;
+      await warehouseService.deleteBin(binId, userId);
       ResponseHandler.success(res, null, 'Bin deleted successfully');
     } catch (error) {
       next(error);

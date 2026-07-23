@@ -18,7 +18,7 @@ export class InventoryController {
       };
 
       const result = await inventoryService.getInventoryItems(filters);
-      ResponseHandler.success(res, result.data, 'Inventory items retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Inventory items retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -26,7 +26,7 @@ export class InventoryController {
 
   async getInventoryItem(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { productId, warehouseId } = req.params;
+      const { productId, warehouseId } = req.params as any;
       const item = await inventoryService.getInventoryItem(productId, warehouseId);
       ResponseHandler.success(res, item, 'Inventory item retrieved successfully');
     } catch (error) {
@@ -84,7 +84,7 @@ export class InventoryController {
       };
 
       const result = await inventoryService.getStockMovements(filters);
-      ResponseHandler.success(res, result.data, 'Stock movements retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Stock movements retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -92,7 +92,8 @@ export class InventoryController {
 
   async getStockMovementById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const movement = await inventoryService.getStockMovementById(req.params.id);
+      const movementId = (req.params as any).id;
+      const movement = await inventoryService.getStockMovementById(movementId);
       ResponseHandler.success(res, movement, 'Stock movement retrieved successfully');
     } catch (error) {
       next(error);
