@@ -113,7 +113,7 @@ model RolePermission {
 model Session {
   id        String   @id @default(uuid())
   userId    String
-  token     String   @unique
+  token     String   @db.VarChar(1000)
   device    String?
   browser   String?
   ipAddress String?
@@ -124,14 +124,13 @@ model Session {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@index([token])
   @@map("sessions")
 }
 
 model RefreshToken {
   id        String   @id @default(uuid())
   userId    String
-  token     String   @unique
+  token     String   @db.VarChar(1000)
   expiresAt DateTime
   createdAt DateTime @default(now())
 
@@ -139,7 +138,6 @@ model RefreshToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@index([token])
   @@map("refresh_tokens")
 }
 
