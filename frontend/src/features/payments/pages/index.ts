@@ -1,1 +1,1 @@
-export { PaymentsListPage } from './payments-list-page';
+export * from './payments-list-page'

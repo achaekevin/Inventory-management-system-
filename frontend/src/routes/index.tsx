@@ -23,6 +23,7 @@ import { ReportsPage } from '@/features/reports/pages'
 import { UsersListPage } from '@/features/users/pages'
 import { SettingsPage } from '@/features/settings/pages'
 import { ProfilePage } from '@/features/profile/pages/profile-page'
+import { PaymentsListPage } from '@/features/payments/pages'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -207,7 +208,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'payments',
-        element: <div className="p-6">Payments Module - Coming Soon</div>,
+        element: <PaymentsListPage />,
       },
       {
         path: 'notifications',
