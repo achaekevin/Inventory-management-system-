@@ -149,49 +149,36 @@ export function Hero() {
                   </div>
                 </div>
 
-                {/* Stats Grid */}
+                {/* System Overview Grid */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
                   {[
-                    { label: 'Total Products', value: '2,847', trend: '+12%' },
-                    { label: 'Active Orders', value: '1,249', trend: '+8%' },
-                    { label: 'Revenue', value: '$94.2K', trend: '+23%' },
-                    { label: 'Warehouses', value: '8', trend: '+2' },
-                  ].map((stat, index) => (
+                    { title: 'Product Catalog', desc: 'Manage SKU, categories, & pricing' },
+                    { title: 'Stock Tracking', desc: 'Real-time inventory levels' },
+                    { title: 'Sales & Orders', desc: 'POS & invoice management' },
+                    { title: 'Reports & Audits', desc: 'Complete activity & financial logs' },
+                  ].map((item, index) => (
                     <motion.div
-                      key={stat.label}
+                      key={item.title}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.5 + index * 0.1 }}
                       className="bg-background/50 rounded-lg p-4 border"
                     >
-                      <p className="text-xs text-muted-foreground mb-1">{stat.label}</p>
-                      <div className="flex items-end justify-between">
-                        <p className="text-2xl font-bold">{stat.value}</p>
-                        <span className="text-xs text-green-600 font-medium">
-                          {stat.trend}
-                        </span>
-                      </div>
+                      <p className="text-sm font-semibold text-foreground mb-1">{item.title}</p>
+                      <p className="text-xs text-muted-foreground">{item.desc}</p>
                     </motion.div>
                   ))}
                 </div>
 
-                {/* Chart Preview */}
-                <div className="bg-background/50 rounded-lg p-4 border">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm font-medium">Inventory Levels</p>
-                    <span className="text-xs text-muted-foreground">Last 7 days</span>
+                {/* Workflow Indicator */}
+                <div className="bg-background/50 rounded-lg p-4 border flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-foreground">System Status</p>
+                    <p className="text-xs text-muted-foreground">Ready for deployment</p>
                   </div>
-                  <div className="flex items-end gap-2 h-24">
-                    {[65, 78, 52, 88, 72, 95, 83].map((height, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ height: 0 }}
-                        animate={{ height: `${height}%` }}
-                        transition={{ delay: 0.7 + i * 0.1, duration: 0.5 }}
-                        className="flex-1 bg-gradient-to-t from-primary to-purple-600 rounded-t"
-                      />
-                    ))}
-                  </div>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-600">
+                    Active & Operational
+                  </span>
                 </div>
               </div>
 

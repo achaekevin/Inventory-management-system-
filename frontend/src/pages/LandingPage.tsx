@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Navigation } from '@/components/landing/Navigation';
 import { Hero } from '@/components/landing/Hero';
 import { Features } from '@/components/landing/Features';
-import { DashboardPreview } from '@/components/landing/DashboardPreview';
 import { CoreModules } from '@/components/landing/CoreModules';
 import { Benefits } from '@/components/landing/Benefits';
 import { HowItWorks } from '@/components/landing/HowItWorks';
@@ -34,9 +33,6 @@ export function LandingPage() {
         </div>
         <div id="features">
           <Features />
-        </div>
-        <div id="preview">
-          <DashboardPreview />
         </div>
         <div id="modules">
           <CoreModules />
