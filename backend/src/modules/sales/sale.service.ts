@@ -455,7 +455,7 @@ export class SaleService {
       totalSales: totalSales._sum.total || 0,
       totalRevenue: totalRevenue._sum.total || 0,
       salesCount,
-      averageOrderValue: salesCount > 0 ? (totalSales._sum.total || 0) / salesCount : 0,
+      averageOrderValue: salesCount > 0 ? Number(totalSales._sum.total || 0) / salesCount : 0,
     };
   }
 

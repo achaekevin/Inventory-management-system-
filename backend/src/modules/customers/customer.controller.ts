@@ -20,7 +20,7 @@ export class CustomerController {
       };
 
       const result = await customerService.getCustomers(filters);
-      ResponseHandler.success(res, result.data, 'Customers retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Customers retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -28,7 +28,8 @@ export class CustomerController {
 
   async getCustomerById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const customer = await customerService.getCustomerById(req.params.id);
+      const customerId = (req.params as any).id;
+      const customer = await customerService.getCustomerById(customerId);
       ResponseHandler.success(res, customer, 'Customer retrieved successfully');
     } catch (error) {
       next(error);
@@ -48,7 +49,8 @@ export class CustomerController {
   async updateCustomer(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const customer = await customerService.updateCustomer(req.params.id, req.body, userId);
+      const customerId = (req.params as any).id;
+      const customer = await customerService.updateCustomer(customerId, req.body, userId);
       ResponseHandler.success(res, customer, 'Customer updated successfully');
     } catch (error) {
       next(error);
@@ -58,7 +60,8 @@ export class CustomerController {
   async deleteCustomer(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await customerService.deleteCustomer(req.params.id, userId);
+      const customerId = (req.params as any).id;
+      await customerService.deleteCustomer(customerId, userId);
       ResponseHandler.success(res, null, 'Customer deleted successfully');
     } catch (error) {
       next(error);
@@ -68,7 +71,8 @@ export class CustomerController {
   async restoreCustomer(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const customer = await customerService.restoreCustomer(req.params.id, userId);
+      const customerId = (req.params as any).id;
+      const customer = await customerService.restoreCustomer(customerId, userId);
       ResponseHandler.success(res, customer, 'Customer restored successfully');
     } catch (error) {
       next(error);
@@ -78,8 +82,9 @@ export class CustomerController {
   async updateLoyaltyPoints(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
+      const customerId = (req.params as any).id;
       const { points, operation } = req.body;
-      const customer = await customerService.updateLoyaltyPoints(req.params.id, points, operation, userId);
+      const customer = await customerService.updateLoyaltyPoints(customerId, points, operation, userId);
       ResponseHandler.success(res, customer, 'Loyalty points updated successfully');
     } catch (error) {
       next(error);
@@ -88,7 +93,8 @@ export class CustomerController {
 
   async getCustomerPurchaseSummary(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const summary = await customerService.getCustomerPurchaseSummary(req.params.id);
+      const customerId = (req.params as any).id;
+      const summary = await customerService.getCustomerPurchaseSummary(customerId);
       ResponseHandler.success(res, summary, 'Purchase summary retrieved successfully');
     } catch (error) {
       next(error);
@@ -99,14 +105,15 @@ export class CustomerController {
 
   async getAddressesByCustomer(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
+      const customerId = (req.params as any).customerId;
       const filters = {
         page: Number(req.query.page) || 1,
         pageSize: Number(req.query.pageSize) || 10,
         search: req.query.search as string,
       };
 
-      const result = await customerService.getAddressesByCustomer(req.params.customerId, filters);
-      ResponseHandler.success(res, result.data, 'Addresses retrieved successfully', result.pagination);
+      const result = await customerService.getAddressesByCustomer(customerId, filters);
+      ResponseHandler.success(res, result.data, 'Addresses retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -114,7 +121,8 @@ export class CustomerController {
 
   async getAddressById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const address = await customerService.getAddressById(req.params.id);
+      const addressId = (req.params as any).id;
+      const address = await customerService.getAddressById(addressId);
       ResponseHandler.success(res, address, 'Address retrieved successfully');
     } catch (error) {
       next(error);
@@ -134,7 +142,8 @@ export class CustomerController {
   async updateAddress(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const address = await customerService.updateAddress(req.params.id, req.body, userId);
+      const addressId = (req.params as any).id;
+      const address = await customerService.updateAddress(addressId, req.body, userId);
       ResponseHandler.success(res, address, 'Address updated successfully');
     } catch (error) {
       next(error);
@@ -144,7 +153,8 @@ export class CustomerController {
   async deleteAddress(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await customerService.deleteAddress(req.params.id, userId);
+      const addressId = (req.params as any).id;
+      await customerService.deleteAddress(addressId, userId);
       ResponseHandler.success(res, null, 'Address deleted successfully');
     } catch (error) {
       next(error);

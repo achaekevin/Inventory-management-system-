@@ -20,7 +20,7 @@ export class PurchaseController {
       };
 
       const result = await purchaseService.getPurchases(filters);
-      ResponseHandler.success(res, result.data, 'Purchases retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Purchases retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -31,7 +31,8 @@ export class PurchaseController {
    */
   async getPurchaseById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const purchase = await purchaseService.getPurchaseById(req.params.id);
+      const purchaseId = (req.params as any).id;
+      const purchase = await purchaseService.getPurchaseById(purchaseId);
       ResponseHandler.success(res, purchase, 'Purchase retrieved successfully');
     } catch (error) {
       next(error);
@@ -57,7 +58,8 @@ export class PurchaseController {
   async updatePurchase(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const purchase = await purchaseService.updatePurchase(req.params.id, req.body, userId);
+      const purchaseId = (req.params as any).id;
+      const purchase = await purchaseService.updatePurchase(purchaseId, req.body, userId);
       ResponseHandler.success(res, purchase, 'Purchase updated successfully');
     } catch (error) {
       next(error);
@@ -70,7 +72,8 @@ export class PurchaseController {
   async approvePurchase(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const purchase = await purchaseService.approvePurchase(req.params.id, userId);
+      const purchaseId = (req.params as any).id;
+      const purchase = await purchaseService.approvePurchase(purchaseId, userId);
       ResponseHandler.success(res, purchase, 'Purchase approved successfully');
     } catch (error) {
       next(error);
@@ -83,7 +86,8 @@ export class PurchaseController {
   async receivePurchase(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const purchase = await purchaseService.receivePurchase(req.params.id, req.body, userId);
+      const purchaseId = (req.params as any).id;
+      const purchase = await purchaseService.receivePurchase(purchaseId, req.body, userId);
       ResponseHandler.success(res, purchase, 'Purchase received successfully');
     } catch (error) {
       next(error);
@@ -96,7 +100,8 @@ export class PurchaseController {
   async cancelPurchase(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const purchase = await purchaseService.cancelPurchase(req.params.id, userId);
+      const purchaseId = (req.params as any).id;
+      const purchase = await purchaseService.cancelPurchase(purchaseId, userId);
       ResponseHandler.success(res, purchase, 'Purchase cancelled successfully');
     } catch (error) {
       next(error);
@@ -109,7 +114,8 @@ export class PurchaseController {
   async deletePurchase(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await purchaseService.deletePurchase(req.params.id, userId);
+      const purchaseId = (req.params as any).id;
+      await purchaseService.deletePurchase(purchaseId, userId);
       ResponseHandler.success(res, null, 'Purchase deleted successfully');
     } catch (error) {
       next(error);

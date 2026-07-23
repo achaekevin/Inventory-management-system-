@@ -1,5 +1,5 @@
 import prisma from '../../config/database';
-import { NotFoundError, BadRequestError, ConflictError } from '../../common/errors/AppError';
+import { NotFoundError, BadRequestError } from '../../common/errors/AppError';
 import { getPaginationParams, PaginationParams } from '../../common/utilities/pagination';
 import logger from '../../config/logger';
 

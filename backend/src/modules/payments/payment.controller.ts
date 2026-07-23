@@ -21,7 +21,7 @@ export class PaymentController {
       };
 
       const result = await paymentService.getPayments(filters);
-      ResponseHandler.success(res, result.data, 'Payments retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Payments retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -32,7 +32,8 @@ export class PaymentController {
    */
   async getPaymentById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const payment = await paymentService.getPaymentById(req.params.id);
+      const paymentId = (req.params as any).id;
+      const payment = await paymentService.getPaymentById(paymentId);
       ResponseHandler.success(res, payment, 'Payment retrieved successfully');
     } catch (error) {
       next(error);
@@ -58,7 +59,8 @@ export class PaymentController {
   async updatePayment(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const payment = await paymentService.updatePayment(req.params.id, req.body, userId);
+      const paymentId = (req.params as any).id;
+      const payment = await paymentService.updatePayment(paymentId, req.body, userId);
       ResponseHandler.success(res, payment, 'Payment updated successfully');
     } catch (error) {
       next(error);
@@ -71,7 +73,8 @@ export class PaymentController {
   async voidPayment(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const payment = await paymentService.voidPayment(req.params.id, userId);
+      const paymentId = (req.params as any).id;
+      const payment = await paymentService.voidPayment(paymentId, userId);
       ResponseHandler.success(res, payment, 'Payment voided successfully');
     } catch (error) {
       next(error);
@@ -84,7 +87,8 @@ export class PaymentController {
   async deletePayment(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await paymentService.deletePayment(req.params.id, userId);
+      const paymentId = (req.params as any).id;
+      await paymentService.deletePayment(paymentId, userId);
       ResponseHandler.success(res, null, 'Payment deleted successfully');
     } catch (error) {
       next(error);
@@ -108,7 +112,7 @@ export class PaymentController {
   /**
    * Get payment methods
    */
-  async getPaymentMethods(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+  async getPaymentMethods(_req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const methods = await paymentService.getPaymentMethods();
       ResponseHandler.success(res, methods, 'Payment methods retrieved successfully');

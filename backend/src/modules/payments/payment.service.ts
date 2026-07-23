@@ -362,7 +362,7 @@ export class PaymentService {
     return {
       totalAmount: totalPayments._sum.amount || 0,
       paymentsCount,
-      averagePayment: paymentsCount > 0 ? (totalPayments._sum.amount || 0) / paymentsCount : 0,
+      averagePayment: paymentsCount > 0 ? Number(totalPayments._sum.amount || 0) / paymentsCount : 0,
       byMethod: paymentsByMethod.map((m) => ({
         method: m.method,
         totalAmount: m._sum.amount || 0,

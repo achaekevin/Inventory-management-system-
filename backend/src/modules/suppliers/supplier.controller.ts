@@ -19,7 +19,7 @@ export class SupplierController {
       };
 
       const result = await supplierService.getSuppliers(filters);
-      ResponseHandler.success(res, result.data, 'Suppliers retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Suppliers retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -27,7 +27,8 @@ export class SupplierController {
 
   async getSupplierById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const supplier = await supplierService.getSupplierById(req.params.id);
+      const supplierId = (req.params as any).id;
+      const supplier = await supplierService.getSupplierById(supplierId);
       ResponseHandler.success(res, supplier, 'Supplier retrieved successfully');
     } catch (error) {
       next(error);
@@ -47,7 +48,8 @@ export class SupplierController {
   async updateSupplier(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const supplier = await supplierService.updateSupplier(req.params.id, req.body, userId);
+      const supplierId = (req.params as any).id;
+      const supplier = await supplierService.updateSupplier(supplierId, req.body, userId);
       ResponseHandler.success(res, supplier, 'Supplier updated successfully');
     } catch (error) {
       next(error);
@@ -57,7 +59,8 @@ export class SupplierController {
   async deleteSupplier(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await supplierService.deleteSupplier(req.params.id, userId);
+      const supplierId = (req.params as any).id;
+      await supplierService.deleteSupplier(supplierId, userId);
       ResponseHandler.success(res, null, 'Supplier deleted successfully');
     } catch (error) {
       next(error);
@@ -67,7 +70,8 @@ export class SupplierController {
   async restoreSupplier(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const supplier = await supplierService.restoreSupplier(req.params.id, userId);
+      const supplierId = (req.params as any).id;
+      const supplier = await supplierService.restoreSupplier(supplierId, userId);
       ResponseHandler.success(res, supplier, 'Supplier restored successfully');
     } catch (error) {
       next(error);
@@ -77,8 +81,9 @@ export class SupplierController {
   async updateSupplierRating(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
+      const supplierId = (req.params as any).id;
       const { rating } = req.body;
-      const supplier = await supplierService.updateSupplierRating(req.params.id, rating, userId);
+      const supplier = await supplierService.updateSupplierRating(supplierId, rating, userId);
       ResponseHandler.success(res, supplier, 'Supplier rating updated successfully');
     } catch (error) {
       next(error);
@@ -95,8 +100,9 @@ export class SupplierController {
         search: req.query.search as string,
       };
 
-      const result = await supplierService.getContactsBySupplier(req.params.supplierId, filters);
-      ResponseHandler.success(res, result.data, 'Contacts retrieved successfully', result.pagination);
+      const supplierId = (req.params as any).supplierId;
+      const result = await supplierService.getContactsBySupplier(supplierId, filters);
+      ResponseHandler.success(res, result.data, 'Contacts retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -104,7 +110,8 @@ export class SupplierController {
 
   async getContactById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const contact = await supplierService.getContactById(req.params.id);
+      const contactId = (req.params as any).id;
+      const contact = await supplierService.getContactById(contactId);
       ResponseHandler.success(res, contact, 'Contact retrieved successfully');
     } catch (error) {
       next(error);
@@ -124,7 +131,8 @@ export class SupplierController {
   async updateContact(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const contact = await supplierService.updateContact(req.params.id, req.body, userId);
+      const contactId = (req.params as any).id;
+      const contact = await supplierService.updateContact(contactId, req.body, userId);
       ResponseHandler.success(res, contact, 'Contact updated successfully');
     } catch (error) {
       next(error);
@@ -134,7 +142,8 @@ export class SupplierController {
   async deleteContact(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await supplierService.deleteContact(req.params.id, userId);
+      const contactId = (req.params as any).id;
+      await supplierService.deleteContact(contactId, userId);
       ResponseHandler.success(res, null, 'Contact deleted successfully');
     } catch (error) {
       next(error);

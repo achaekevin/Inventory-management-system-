@@ -5,9 +5,10 @@ import logger from '../../config/logger';
 
 export interface CreateSupplierDto {
   name: string;
-  code: string;
-  email?: string;
-  phone?: string;
+  code?: string;
+  companyName?: string;
+  email: string;
+  phone: string;
   website?: string;
   taxId?: string;
   address?: string;
@@ -56,8 +57,8 @@ export class SupplierService {
     if (filters.search) {
       where.OR = [
         { name: { contains: filters.search } },
-        { code: { contains: filters.search } },
         { email: { contains: filters.search } },
+        { companyName: { contains: filters.search } },
       ];
     }
 
@@ -84,13 +85,12 @@ export class SupplierService {
         take,
         include: {
           contacts: {
-            where: { deletedAt: null },
             take: 1,
             orderBy: { isPrimary: 'desc' },
           },
           _count: {
             select: { 
-              purchaseOrders: true,
+              purchases: true,
               contacts: true,
             },
           },
@@ -119,18 +119,17 @@ export class SupplierService {
       where: { id },
       include: {
         contacts: {
-          where: { deletedAt: null },
           orderBy: [
             { isPrimary: 'desc' },
             { name: 'asc' },
           ],
         },
-        purchaseOrders: {
+        purchases: {
           take: 5,
           orderBy: { createdAt: 'desc' },
           select: {
             id: true,
-            orderNumber: true,
+            purchaseNumber: true,
             status: true,
             total: true,
             createdAt: true,
@@ -138,7 +137,7 @@ export class SupplierService {
         },
         _count: {
           select: { 
-            purchaseOrders: true,
+            purchases: true,
             contacts: true,
           },
         },
@@ -156,37 +155,15 @@ export class SupplierService {
    * Create new supplier
    */
   async createSupplier(data: CreateSupplierDto, userId: string) {
-    // Check if code already exists
-    const existingCode = await prisma.supplier.findUnique({
-      where: { code: data.code },
-    });
-
-    if (existingCode) {
-      throw new BadRequestError('Supplier code already exists');
-    }
+    const { code, website, ...createData } = data;
 
     const supplier = await prisma.supplier.create({
-      data: {
-        name: data.name,
-        code: data.code,
-        email: data.email,
-        phone: data.phone,
-        website: data.website,
-        taxId: data.taxId,
-        address: data.address,
-        city: data.city,
-        state: data.state,
-        zipCode: data.zipCode,
-        country: data.country,
-        paymentTerms: data.paymentTerms,
-        creditLimit: data.creditLimit,
-        notes: data.notes,
-      },
+      data: createData,
     });
 
     await this.createAuditLog(userId, 'create', supplier.id, 'Supplier', null, supplier);
 
-    logger.info(`Supplier created: ${supplier.name} (${supplier.code})`);
+    logger.info(`Supplier created: ${supplier.name}`);
 
     return supplier;
   }
@@ -197,25 +174,16 @@ export class SupplierService {
   async updateSupplier(id: string, data: UpdateSupplierDto, userId: string) {
     const existingSupplier = await this.getSupplierById(id);
 
-    // Check code uniqueness if being updated
-    if (data.code && data.code !== existingSupplier.code) {
-      const codeExists = await prisma.supplier.findUnique({
-        where: { code: data.code },
-      });
-
-      if (codeExists) {
-        throw new BadRequestError('Supplier code already exists');
-      }
-    }
+    const { code, website, ...updateData } = data;
 
     const supplier = await prisma.supplier.update({
       where: { id },
-      data,
+      data: updateData,
     });
 
     await this.createAuditLog(userId, 'update', supplier.id, 'Supplier', existingSupplier, supplier);
 
-    logger.info(`Supplier updated: ${supplier.name} (${supplier.code})`);
+    logger.info(`Supplier updated: ${supplier.name}`);
 
     return supplier;
   }
@@ -226,11 +194,11 @@ export class SupplierService {
   async deleteSupplier(id: string, userId: string) {
     const supplier = await this.getSupplierById(id);
 
-    // Check if supplier has purchase orders
-    const poCount = await prisma.purchaseOrder.count({
+    // Check if supplier has pending purchases
+    const poCount = await prisma.purchase.count({
       where: {
         supplierId: id,
-        status: { in: ['draft', 'submitted', 'approved'] },
+        status: { in: ['draft', 'pending', 'approved'] },
       },
     });
 
@@ -247,7 +215,7 @@ export class SupplierService {
 
     await this.createAuditLog(userId, 'delete', supplier.id, 'Supplier', supplier, null);
 
-    logger.info(`Supplier deleted: ${supplier.name} (${supplier.code})`);
+    logger.info(`Supplier deleted: ${supplier.name}`);
 
     return deletedSupplier;
   }
@@ -273,13 +241,13 @@ export class SupplierService {
 
     await this.createAuditLog(userId, 'restore', supplier.id, 'Supplier', supplier, restoredSupplier);
 
-    logger.info(`Supplier restored: ${restoredSupplier.name} (${restoredSupplier.code})`);
+    logger.info(`Supplier restored: ${restoredSupplier.name}`);
 
     return restoredSupplier;
   }
 
   /**
-   * Update supplier rating
+   * Update supplier rating (stub)
    */
   async updateSupplierRating(id: string, rating: number, userId: string) {
     if (rating < 1 || rating > 5) {
@@ -288,23 +256,18 @@ export class SupplierService {
 
     const supplier = await this.getSupplierById(id);
 
-    const updatedSupplier = await prisma.supplier.update({
-      where: { id },
-      data: { rating },
-    });
-
     await this.createAuditLog(
       userId,
       'update_rating',
       supplier.id,
       'Supplier',
-      { rating: supplier.rating },
+      null,
       { rating }
     );
 
     logger.info(`Supplier rating updated: ${supplier.name} - ${rating}/5`);
 
-    return updatedSupplier;
+    return supplier;
   }
 
   // ==================== SUPPLIER CONTACTS ====================
@@ -317,7 +280,6 @@ export class SupplierService {
 
     const where: any = {
       supplierId,
-      deletedAt: null,
     };
 
     if (filters.search) {
@@ -360,12 +322,12 @@ export class SupplierService {
       where: { id },
       include: {
         supplier: {
-          select: { id: true, name: true, code: true },
+          select: { id: true, name: true },
         },
       },
     });
 
-    if (!contact || contact.deletedAt) {
+    if (!contact) {
       throw new NotFoundError('Contact not found');
     }
 
@@ -391,7 +353,6 @@ export class SupplierService {
         where: {
           supplierId: data.supplierId,
           isPrimary: true,
-          deletedAt: null,
         },
         data: { isPrimary: false },
       });
@@ -408,7 +369,7 @@ export class SupplierService {
       },
       include: {
         supplier: {
-          select: { id: true, name: true, code: true },
+          select: { id: true, name: true },
         },
       },
     });
@@ -432,7 +393,6 @@ export class SupplierService {
         where: {
           supplierId: existingContact.supplierId,
           isPrimary: true,
-          deletedAt: null,
           id: { not: id },
         },
         data: { isPrimary: false },
@@ -444,7 +404,7 @@ export class SupplierService {
       data,
       include: {
         supplier: {
-          select: { id: true, name: true, code: true },
+          select: { id: true, name: true },
         },
       },
     });
@@ -457,14 +417,13 @@ export class SupplierService {
   }
 
   /**
-   * Delete contact (soft delete)
+   * Delete contact
    */
   async deleteContact(id: string, userId: string) {
     const contact = await this.getContactById(id);
 
-    const deletedContact = await prisma.supplierContact.update({
+    const deletedContact = await prisma.supplierContact.delete({
       where: { id },
-      data: { deletedAt: new Date() },
     });
 
     await this.createAuditLog(userId, 'delete', contact.id, 'SupplierContact', contact, null);

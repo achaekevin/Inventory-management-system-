@@ -21,7 +21,7 @@ export class SaleController {
       };
 
       const result = await saleService.getSales(filters);
-      ResponseHandler.success(res, result.data, 'Sales retrieved successfully', result.pagination);
+      ResponseHandler.success(res, result.data, 'Sales retrieved successfully', 200, result.pagination);
     } catch (error) {
       next(error);
     }
@@ -32,7 +32,8 @@ export class SaleController {
    */
   async getSaleById(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const sale = await saleService.getSaleById(req.params.id);
+      const saleId = (req.params as any).id;
+      const sale = await saleService.getSaleById(saleId);
       ResponseHandler.success(res, sale, 'Sale retrieved successfully');
     } catch (error) {
       next(error);
@@ -58,7 +59,8 @@ export class SaleController {
   async updateSale(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      const sale = await saleService.updateSale(req.params.id, req.body, userId);
+      const saleId = (req.params as any).id;
+      const sale = await saleService.updateSale(saleId, req.body, userId);
       ResponseHandler.success(res, sale, 'Sale updated successfully');
     } catch (error) {
       next(error);
@@ -71,8 +73,9 @@ export class SaleController {
   async cancelSale(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
+      const saleId = (req.params as any).id;
       const { warehouseId } = req.body;
-      const sale = await saleService.cancelSale(req.params.id, userId, warehouseId);
+      const sale = await saleService.cancelSale(saleId, userId, warehouseId);
       ResponseHandler.success(res, sale, 'Sale cancelled successfully');
     } catch (error) {
       next(error);
@@ -85,7 +88,8 @@ export class SaleController {
   async deleteSale(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.id;
-      await saleService.deleteSale(req.params.id, userId);
+      const saleId = (req.params as any).id;
+      await saleService.deleteSale(saleId, userId);
       ResponseHandler.success(res, null, 'Sale deleted successfully');
     } catch (error) {
       next(error);
