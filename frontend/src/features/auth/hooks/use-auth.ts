@@ -12,6 +12,13 @@ import authService, {
 import { queryKeys } from '@/lib/query-client'
 import { toast } from 'sonner'
 
+const extractTokens = (data: any) => {
+  if (!data) return { token: '', refreshToken: '' }
+  const token = data.tokens?.accessToken || data.token || data.accessToken || ''
+  const refreshToken = data.tokens?.refreshToken || data.refreshToken || ''
+  return { token, refreshToken }
+}
+
 export function useAuth() {
   const { user, isAuthenticated, setUser, setTokens, logout: logoutStore } = useAuthStore()
   const queryClient = useQueryClient()
@@ -20,8 +27,9 @@ export function useAuth() {
   // Login mutation
   const loginMutation = useMutation({
     mutationFn: authService.login,
-    onSuccess: (data) => {
-      setTokens(data.token, data.refreshToken)
+    onSuccess: (data: any) => {
+      const { token, refreshToken } = extractTokens(data)
+      setTokens(token, refreshToken)
       setUser(data.user)
       queryClient.invalidateQueries({ queryKey: queryKeys.auth.all })
       toast.success('Login successful!')
@@ -35,8 +43,9 @@ export function useAuth() {
   // Register mutation
   const registerMutation = useMutation({
     mutationFn: authService.register,
-    onSuccess: (data) => {
-      setTokens(data.token, data.refreshToken)
+    onSuccess: (data: any) => {
+      const { token, refreshToken } = extractTokens(data)
+      setTokens(token, refreshToken)
       setUser(data.user)
       toast.success('Registration successful!')
       navigate('/dashboard')
@@ -100,8 +109,9 @@ export function useAuth() {
   // Verify OTP mutation
   const verifyOTPMutation = useMutation({
     mutationFn: authService.verifyOTP,
-    onSuccess: (data) => {
-      setTokens(data.token, data.refreshToken)
+    onSuccess: (data: any) => {
+      const { token, refreshToken } = extractTokens(data)
+      setTokens(token, refreshToken)
       setUser(data.user)
       toast.success('OTP verified successfully!')
       navigate('/dashboard')

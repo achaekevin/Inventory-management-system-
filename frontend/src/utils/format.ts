@@ -110,12 +110,15 @@ export const slugify = (str: string): string => {
 
 // Generate initials
 export const getInitials = (name: string): string => {
+  if (!name) return 'U'
   return name
-    .split(' ')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
     .map((word) => word[0])
     .join('')
     .toUpperCase()
-    .slice(0, 2)
+    .slice(0, 2) || 'U'
 }
 
 // Mask email

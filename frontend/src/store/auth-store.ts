@@ -30,9 +30,18 @@ export const useAuthStore = create<AuthState>()(
         }),
 
       setTokens: (token, refreshToken) => {
-        localStorage.setItem('auth_token', token)
-        localStorage.setItem('refresh_token', refreshToken)
-        set({ token, refreshToken, isAuthenticated: true })
+        if (token && token !== 'undefined' && token !== 'null') {
+          localStorage.setItem('auth_token', token)
+        } else {
+          localStorage.removeItem('auth_token')
+        }
+        if (refreshToken && refreshToken !== 'undefined' && refreshToken !== 'null') {
+          localStorage.setItem('refresh_token', refreshToken)
+        } else {
+          localStorage.removeItem('refresh_token')
+        }
+        const validToken = Boolean(token && token !== 'undefined' && token !== 'null')
+        set({ token: validToken ? token : null, refreshToken: refreshToken || null, isAuthenticated: validToken })
       },
 
       logout: () => {

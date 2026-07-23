@@ -17,8 +17,12 @@ export interface RegisterData {
 
 export interface AuthResponse {
   user: User
-  token: string
-  refreshToken: string
+  tokens?: {
+    accessToken: string
+    refreshToken: string
+  }
+  token?: string
+  refreshToken?: string
 }
 
 export interface ForgotPasswordData {

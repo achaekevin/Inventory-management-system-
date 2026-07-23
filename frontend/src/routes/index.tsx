@@ -25,7 +25,8 @@ import { SettingsPage } from '@/features/settings/pages'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const isAuthenticated = localStorage.getItem('auth_token')
+  const token = localStorage.getItem('auth_token')
+  const isAuthenticated = Boolean(token && token !== 'undefined' && token !== 'null')
   
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
@@ -36,7 +37,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 // Public Route wrapper (redirect to dashboard if already logged in)
 function PublicRoute({ children }: { children: React.ReactNode }) {
-  const isAuthenticated = localStorage.getItem('auth_token')
+  const token = localStorage.getItem('auth_token')
+  const isAuthenticated = Boolean(token && token !== 'undefined' && token !== 'null')
   
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />
