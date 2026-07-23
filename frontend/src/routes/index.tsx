@@ -51,8 +51,8 @@ export const router = createBrowserRouter([
     element: <LandingPage />,
   },
   {
-    path: '/app',
-    element: <Navigate to="/app/dashboard" replace />,
+    path: '/app/*',
+    element: <Navigate to="/dashboard" replace />,
   },
   {
     path: '/',
@@ -101,7 +101,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: '/app',
+    path: '/',
     element: (
       <ProtectedRoute>
         <MainLayout />
