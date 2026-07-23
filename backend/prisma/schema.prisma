@@ -520,7 +520,7 @@ model Purchase {
   id              String    @id @default(uuid())
   purchaseNumber  String    @unique
   supplierId      String
-  status          String    @default("draft") // draft, pending, approved, received, completed, cancelled
+  status          String    @default("draft") // draft | submitted | pending_supervisor | pending_finance | approved | ordered | received | completed | cancelled | rejected
   orderDate       DateTime
   expectedDate    DateTime?
   receivedDate    DateTime?
@@ -538,8 +538,9 @@ model Purchase {
   deletedAt       DateTime?
 
   // Relations
-  supplier Supplier       @relation(fields: [supplierId], references: [id])
-  items    PurchaseItem[]
+  supplier       Supplier               @relation(fields: [supplierId], references: [id])
+  items          PurchaseItem[]
+  approvalSteps  PurchaseApprovalStep[]
 
   @@index([purchaseNumber])
   @@index([supplierId])
@@ -568,6 +569,25 @@ model PurchaseItem {
   @@index([purchaseId])
   @@index([productId])
   @@map("purchase_items")
+}
+
+// ==================== PURCHASE APPROVAL WORKFLOW ====================
+
+model PurchaseApprovalStep {
+  id         String   @id @default(uuid())
+  purchaseId String
+  step       String   // submitted | supervisor_approved | supervisor_rejected | finance_approved | finance_rejected | ordered | received
+  actorId    String
+  comment    String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  // Relations
+  purchase Purchase @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  @@index([purchaseId])
+  @@index([step])
+  @@index([actorId])
+  @@map("purchase_approval_steps")
 }
 
 // ==================== SALES ====================

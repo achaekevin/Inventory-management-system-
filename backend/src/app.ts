@@ -29,6 +29,7 @@ import paymentRoutes from './modules/payments/payment.routes';
 import reportRoutes from './modules/reports/report.routes';
 import dashboardRoutes from './modules/dashboard/dashboard.routes';
 import reorderRoutes from './modules/reorder/reorder.routes';
+import workflowRoutes from './modules/workflow/workflow.routes';
 
 const app: Application = express();
 
@@ -139,6 +140,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reorder', reorderRoutes);
+app.use('/api/workflow', workflowRoutes);
 
 // Welcome route
 app.get('/', (_req: Request, res: Response) => {
