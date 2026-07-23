@@ -24,7 +24,6 @@ import { cn } from '@/lib/utils'
 
 export function Header() {
   const { 
-    isSidebarCollapsed, 
     toggleSidebar, 
     setCommandPaletteOpen,
     theme,
@@ -39,10 +38,7 @@ export function Header() {
 
   return (
     <header
-      className={cn(
-        'sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 transition-all duration-300',
-        isSidebarCollapsed ? 'ml-16' : 'ml-64'
-      )}
+      className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 w-full"
     >
       {/* Mobile Menu Toggle */}
       <Button
