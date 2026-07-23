@@ -26,6 +26,7 @@ import { ProfilePage } from '@/features/profile/pages/profile-page'
 import { PaymentsListPage } from '@/features/payments/pages'
 import { WarehousesListPage } from '@/features/warehouses/pages'
 import { SmartReorderPage } from '@/features/reorder/pages/smart-reorder-page'
+import { PurchaseApprovalPage } from '@/features/workflow/pages/purchase-approval-page'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -220,6 +221,11 @@ export const router = createBrowserRouter([
       {
         path: 'reorder',
         element: <SmartReorderPage />,
+      },
+      // Purchase Approval Workflow
+      {
+        path: 'approvals',
+        element: <PurchaseApprovalPage />,
       },
       // Profile
       {
