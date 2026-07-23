@@ -6,11 +6,8 @@ import { DashboardPreview } from '@/components/landing/DashboardPreview';
 import { CoreModules } from '@/components/landing/CoreModules';
 import { Benefits } from '@/components/landing/Benefits';
 import { HowItWorks } from '@/components/landing/HowItWorks';
-import { Statistics } from '@/components/landing/Statistics';
-import { Pricing } from '@/components/landing/Pricing';
 import { FAQ } from '@/components/landing/FAQ';
 import { CTA } from '@/components/landing/CTA';
-import { Contact } from '@/components/landing/Contact';
 import { Footer } from '@/components/landing/Footer';
 
 export function LandingPage() {
@@ -26,37 +23,32 @@ export function LandingPage() {
         'Streamline your warehouse operations with InventoryPro - a comprehensive inventory management platform with real-time tracking, multi-warehouse support, and advanced analytics.'
       );
     }
-
-    // Update Open Graph tags
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) {
-      ogTitle.setAttribute('content', 'InventoryPro - Enterprise Inventory Management System');
-    }
-
-    const ogDescription = document.querySelector('meta[property="og:description"]');
-    if (ogDescription) {
-      ogDescription.setAttribute(
-        'content',
-        'Transform your business with enterprise-grade inventory management. Track stock, manage warehouses, and make data-driven decisions.'
-      );
-    }
   }, []);
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       <main>
-        <Hero />
-        <Features />
-        <DashboardPreview />
-        <CoreModules />
+        <div id="overview">
+          <Hero />
+        </div>
+        <div id="features">
+          <Features />
+        </div>
+        <div id="preview">
+          <DashboardPreview />
+        </div>
+        <div id="modules">
+          <CoreModules />
+        </div>
         <Benefits />
-        <HowItWorks />
-        <Statistics />
-        <Pricing />
-        <FAQ />
+        <div id="how-it-works">
+          <HowItWorks />
+        </div>
+        <div id="faq">
+          <FAQ />
+        </div>
         <CTA />
-        <Contact />
       </main>
       <Footer />
     </div>

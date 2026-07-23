@@ -6,27 +6,19 @@ import { Separator } from '@/components/ui/separator';
 
 const footerLinks = {
   product: [
+    { name: 'Overview', href: '#overview' },
     { name: 'Features', href: '#features' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'Documentation', href: '#docs' },
-    { name: 'Updates', href: '#updates' },
-  ],
-  company: [
-    { name: 'About', href: '#about' },
-    { name: 'Careers', href: '#careers' },
-    { name: 'Contact', href: '#contact' },
-    { name: 'Blog', href: '#blog' },
+    { name: 'Core Modules', href: '#modules' },
+    { name: 'How It Works', href: '#how-it-works' },
   ],
   resources: [
-    { name: 'Help Center', href: '#help' },
-    { name: 'API Docs', href: '#api' },
-    { name: 'User Guide', href: '#guide' },
+    { name: 'Dashboard Preview', href: '#preview' },
     { name: 'FAQ', href: '#faq' },
+    { name: 'Login', href: '/login' },
   ],
   legal: [
     { name: 'Privacy Policy', href: '#privacy' },
     { name: 'Terms of Service', href: '#terms' },
-    { name: 'Cookie Policy', href: '#cookies' },
     { name: 'Security', href: '#security' },
   ],
 };
@@ -131,33 +123,18 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            <h3 className="font-semibold mb-4">Company</h3>
-            <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
-                <li key={link.name}>
-                  <button
-                    onClick={() => scrollToSection(link.href)}
-                    className="text-muted-foreground hover:text-primary transition-colors text-sm"
-                  >
-                    {link.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-          >
-            <h3 className="font-semibold mb-4">Resources</h3>
+            <h3 className="font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-3">
               {footerLinks.resources.map((link) => (
                 <li key={link.name}>
                   <button
-                    onClick={() => scrollToSection(link.href)}
+                    onClick={() => {
+                      if (link.href.startsWith('/')) {
+                        window.location.href = link.href;
+                      } else {
+                        scrollToSection(link.href);
+                      }
+                    }}
                     className="text-muted-foreground hover:text-primary transition-colors text-sm"
                   >
                     {link.name}

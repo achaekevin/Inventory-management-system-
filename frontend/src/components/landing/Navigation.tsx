@@ -6,13 +6,12 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
-  { name: 'Product', href: '#product' },
+  { name: 'Overview', href: '#overview' },
   { name: 'Features', href: '#features' },
-  { name: 'Solutions', href: '#solutions' },
-  { name: 'Pricing', href: '#pricing' },
-  { name: 'Documentation', href: '#docs' },
+  { name: 'Dashboard Preview', href: '#preview' },
+  { name: 'Core Modules', href: '#modules' },
+  { name: 'How It Works', href: '#how-it-works' },
   { name: 'FAQ', href: '#faq' },
-  { name: 'Contact', href: '#contact' },
 ];
 
 export function Navigation() {
