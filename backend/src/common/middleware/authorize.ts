@@ -8,7 +8,7 @@ import { ForbiddenError } from '../errors/AppError';
  * @param action - The action (e.g., 'create', 'read', 'update', 'delete')
  */
 export const authorize = (module: string, action: string) => {
-  return (req: AuthRequest, res: Response, next: NextFunction): void => {
+  return (req: AuthRequest, _res: Response, next: NextFunction): void => {
     if (!req.user) {
       return next(new ForbiddenError('Authentication required'));
     }
@@ -32,7 +32,7 @@ export const authorize = (module: string, action: string) => {
  * Authorize by role
  */
 export const authorizeRole = (...requiredRoles: string[]) => {
-  return (req: AuthRequest, res: Response, next: NextFunction): void => {
+  return (req: AuthRequest, _res: Response, next: NextFunction): void => {
     if (!req.user) {
       return next(new ForbiddenError('Authentication required'));
     }

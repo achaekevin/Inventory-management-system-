@@ -47,7 +47,7 @@ const gracefulShutdown = async (signal: string) => {
 };
 
 // Handle unhandled promise rejections
-process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
+process.on('unhandledRejection', (reason: any, _promise: Promise<any>) => {
   logger.error('UNHANDLED REJECTION! 💥 Shutting down...', reason);
   gracefulShutdown('UNHANDLED_REJECTION');
 });
