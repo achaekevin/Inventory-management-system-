@@ -1,5 +1,4 @@
 import prisma from '../../config/database';
-import logger from '../../config/logger';
 
 export class DashboardService {
   /**
@@ -66,41 +65,36 @@ export class DashboardService {
     ]);
 
     // Get inventory stats
-    const [totalProducts, lowStockCount, outOfStockCount, totalInventoryValue] = await Promise.all([
-      prisma.product.count({
-        where: {
-          deletedAt: null,
-          isActive: true,
-        },
-      }),
-      prisma.inventoryItem.count({
-        where: {
-          quantity: {
-            lte: prisma.inventoryItem.fields.product.minStock,
-            gt: 0,
+    const allInventoryItems = await prisma.inventoryItem.findMany({
+      include: {
+        product: {
+          select: {
+            minStock: true,
+            cost: true,
           },
         },
-      }),
-      prisma.inventoryItem.count({
-        where: {
-          quantity: 0,
-        },
-      }),
-      prisma.inventoryItem.findMany({
-        include: {
-          product: {
-            select: {
-              cost: true,
-            },
-          },
-        },
-      }),
-    ]);
+      },
+    });
 
-    const inventoryValue = totalInventoryValue.reduce(
-      (sum, item) => sum + item.quantity * Number(item.product.cost),
+    const totalProducts = await prisma.product.count({
+      where: {
+        deletedAt: null,
+        isActive: true,
+      },
+    });
+
+    const lowStockCount = allInventoryItems.filter(
+      (item) => item.quantity > 0 && item.quantity <= (item.product.minStock || 0)
+    ).length;
+
+    const outOfStockCount = allInventoryItems.filter((item) => item.quantity === 0).length;
+
+    const inventoryValue = allInventoryItems.reduce(
+      (sum, item) => sum + item.quantity * Number(item.product.cost || 0),
       0
     );
+
+
 
     // Get customer stats
     const [totalCustomers, activeCustomers] = await Promise.all([
@@ -348,17 +342,6 @@ export class DashboardService {
    */
   async getLowStockAlerts(limit: number = 10) {
     const inventory = await prisma.inventoryItem.findMany({
-      where: {
-        OR: [
-          { quantity: 0 },
-          {
-            quantity: {
-              lte: prisma.inventoryItem.fields.product.minStock,
-            },
-          },
-        ],
-      },
-      take: limit,
       include: {
         product: {
           select: {
@@ -380,7 +363,11 @@ export class DashboardService {
       },
     });
 
-    return inventory.map((item) => ({
+    const lowStockItems = inventory.filter(
+      (item) => item.quantity === 0 || item.quantity <= (item.product.minStock || 0)
+    ).slice(0, limit);
+
+    return lowStockItems.map((item) => ({
       product: item.product,
       warehouse: item.warehouse.name,
       currentStock: item.quantity,

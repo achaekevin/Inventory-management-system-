@@ -90,7 +90,7 @@ export class ReportController {
         throw new BadRequestError('From date must be before to date');
       }
 
-      const report = await reportService.getCustomerReport(fromDate, toDate, limit);
+      const report = await reportService.getTopCustomersReport(fromDate, toDate, limit);
       ResponseHandler.success(res, report, 'Customer report retrieved successfully');
     } catch (error) {
       next(error);
@@ -119,7 +119,7 @@ export class ReportController {
   /**
    * Get low stock report
    */
-  async getLowStockReport(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+  async getLowStockReport(_req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const report = await reportService.getLowStockReport();
       ResponseHandler.success(res, report, 'Low stock report retrieved successfully');

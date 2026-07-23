@@ -1,12 +1,10 @@
 import prisma from '../../config/database';
-import { BadRequestError } from '../../common/errors/AppError';
-import logger from '../../config/logger';
 
 export class ReportService {
   /**
    * Get sales report
    */
-  async getSalesReport(fromDate: Date, toDate: Date, groupBy: 'day' | 'week' | 'month' = 'day') {
+  async getSalesReport(fromDate: Date, toDate: Date, _groupBy: 'day' | 'week' | 'month' = 'day') {
     const sales = await prisma.sale.findMany({
       where: {
         saleDate: {
@@ -262,7 +260,7 @@ export class ReportService {
           quantitySold: item._sum.quantity || 0,
           revenue: item._sum.total || 0,
           ordersCount: item._count,
-          profit: (item._sum.total || 0) - (item._sum.quantity || 0) * Number(product?.cost || 0),
+          profit: Number(item._sum.total || 0) - (item._sum.quantity || 0) * Number(product?.cost || 0),
         };
       })
     );
@@ -273,10 +271,10 @@ export class ReportService {
   }
 
   /**
-   * Get customer report
+   * Get top customers report
    */
-  async getCustomerReport(fromDate: Date, toDate: Date, limit: number = 20) {
-    const customersData = await prisma.sale.groupBy({
+  async getTopCustomersReport(fromDate: Date, toDate: Date, limit: number = 10) {
+    const topSales = await prisma.sale.groupBy({
       by: ['customerId'],
       where: {
         saleDate: {
@@ -302,9 +300,11 @@ export class ReportService {
     });
 
     const customers = await Promise.all(
-      customersData.map(async (item) => {
+      topSales.map(async (item) => {
+        if (!item.customerId) return null;
+
         const customer = await prisma.customer.findUnique({
-          where: { id: item.customerId! },
+          where: { id: item.customerId },
           select: {
             id: true,
             firstName: true,
@@ -320,7 +320,7 @@ export class ReportService {
           customer: customer,
           totalPurchases: item._sum.total || 0,
           ordersCount: item._count,
-          averageOrderValue: (item._sum.total || 0) / item._count,
+          averageOrderValue: Number(item._sum.total || 0) / item._count,
         };
       })
     );
@@ -419,16 +419,6 @@ export class ReportService {
    */
   async getLowStockReport() {
     const inventory = await prisma.inventoryItem.findMany({
-      where: {
-        OR: [
-          { quantity: 0 },
-          {
-            quantity: {
-              lte: prisma.inventoryItem.fields.product.minStock,
-            },
-          },
-        ],
-      },
       include: {
         product: {
           select: {
@@ -453,8 +443,12 @@ export class ReportService {
       },
     });
 
+    const lowStockInventory = inventory.filter(
+      (item) => item.quantity === 0 || item.quantity <= (item.product.minStock || 0)
+    );
+
     return {
-      items: inventory.map((item) => ({
+      items: lowStockInventory.map((item) => ({
         product: item.product,
         warehouse: item.warehouse,
         currentStock: item.quantity,
@@ -463,9 +457,9 @@ export class ReportService {
         status: item.quantity === 0 ? 'out_of_stock' : 'low_stock',
       })),
       summary: {
-        totalItems: inventory.length,
-        outOfStock: inventory.filter((i) => i.quantity === 0).length,
-        lowStock: inventory.filter(
+        totalItems: lowStockInventory.length,
+        outOfStock: lowStockInventory.filter((i) => i.quantity === 0).length,
+        lowStock: lowStockInventory.filter(
           (i) => i.quantity > 0 && i.quantity <= i.product.minStock
         ).length,
       },
