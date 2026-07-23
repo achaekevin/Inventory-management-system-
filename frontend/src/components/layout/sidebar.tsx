@@ -100,6 +100,11 @@ const navigation: NavItem[] = [
     icon: ClipboardList,
   },
   {
+    title: 'Credit',
+    href: '/credit',
+    icon: CreditCard,
+  },
+  {
     title: 'Users',
     href: '/users',
     icon: UserCog,

@@ -27,6 +27,7 @@ import { PaymentsListPage } from '@/features/payments/pages'
 import { WarehousesListPage } from '@/features/warehouses/pages'
 import { SmartReorderPage } from '@/features/reorder/pages/smart-reorder-page'
 import { PurchaseApprovalPage } from '@/features/workflow/pages/purchase-approval-page'
+import { CustomerCreditPage } from '@/features/credit/pages/customer-credit-page'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -226,6 +227,11 @@ export const router = createBrowserRouter([
       {
         path: 'approvals',
         element: <PurchaseApprovalPage />,
+      },
+      // Customer Credit Management
+      {
+        path: 'credit',
+        element: <CustomerCreditPage />,
       },
       // Profile
       {
