@@ -13,7 +13,9 @@ async function main() {
   // Create default Super Administrator user
   console.log('Creating default Super Administrator...');
   
-  const hashedPassword = await bcrypt.hash('Admin@123', 12);
+  // Default seed password (configurable via SEED_DEFAULT_PASSWORD env var)
+  const defaultPassword = process.env.SEED_DEFAULT_PASSWORD || 'Admin@123';
+  const hashedPassword = await bcrypt.hash(defaultPassword, 12);
   
   const superAdminRole = await prisma.role.findUnique({
     where: { slug: 'super-administrator' },
