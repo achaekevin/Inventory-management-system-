@@ -777,3 +777,42 @@ model Setting {
   @@index([group])
   @@map("settings")
 }
+
+// ==================== WORKFLOW AUTOMATION ====================
+
+model AutomationRule {
+  id          String    @id @default(uuid())
+  name        String
+  description String?   @db.Text
+  type        String    // low_stock_po | high_value_notify | overdue_payment_reminder | archive_inactive_product
+  config      Json      // rule-specific config: threshold, roles, days, etc.
+  isEnabled   Boolean   @default(true)
+  intervalHours Int     @default(24) // how often the scheduler re-runs this rule
+  lastRunAt   DateTime?
+  createdBy   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  logs        AutomationLog[]
+
+  @@index([type])
+  @@index([isEnabled])
+  @@index([createdBy])
+  @@map("automation_rules")
+}
+
+model AutomationLog {
+  id            String   @id @default(uuid())
+  ruleId        String
+  rule          AutomationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  status        String   // success | error | skipped
+  message       String?  @db.Text
+  itemsAffected Int      @default(0)
+  details       Json?
+  createdAt     DateTime @default(now())
+
+  @@index([ruleId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("automation_logs")
+}
