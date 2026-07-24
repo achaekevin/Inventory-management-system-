@@ -2,6 +2,7 @@ import app from './app';
 import { config } from './config/env';
 import logger from './config/logger';
 import prisma from './config/database';
+import { startAutomationScheduler, stopAutomationScheduler } from './modules/automation/automation.scheduler';
 
 const PORT = config.PORT || 5000;
 
@@ -27,6 +28,9 @@ const gracefulShutdown = async (signal: string) => {
     logger.info('HTTP server closed');
 
     try {
+      // Stop automation scheduler
+      stopAutomationScheduler();
+
       // Close database connection
       await prisma.$disconnect();
       logger.info('Database connection closed');
@@ -60,6 +64,7 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 prisma.$connect()
   .then(() => {
     logger.info('✅ Database connected successfully');
+    startAutomationScheduler();
   })
   .catch((error) => {
     logger.error('❌ Database connection failed:', error);
