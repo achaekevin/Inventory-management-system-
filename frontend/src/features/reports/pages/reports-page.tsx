@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 import {
   Download, FileText, BarChart3, TrendingUp, Package, Users,
   FileSpreadsheet, Loader2, RefreshCw, Table, Filter,
-  ChevronDown, CheckCircle2, AlertCircle, XCircle
+  ChevronDown, CheckCircle2, AlertCircle, XCircle, Pin, Bookmark
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -15,6 +15,7 @@ import {
   useSalesReport, useInventoryReport, usePurchaseReport, useCustomerReport,
   type SaleReportRow, type InventoryReportRow, type PurchaseReportRow, type CustomerReportRow
 } from '../hooks/use-reports'
+import { useDashboardLayout } from '@/features/dashboard/hooks/use-dashboard-layout'
 import { exportReport, type ReportColumn } from '@/lib/report-exporter'
 
 // ─── Report definitions ───────────────────────────────────────────────────────
@@ -230,6 +231,8 @@ export function ReportsPage() {
     }
   }, [format, reportData, reportType, currentReport, startDate, endDate])
 
+  const { togglePinReport, isReportPinned } = useDashboardLayout()
+
   return (
     <div className="space-y-6">
 
@@ -270,24 +273,43 @@ export function ReportsPage() {
           {REPORTS.map(r => {
             const Icon = r.icon
             const active = reportType === r.id
+            const isPinned = isReportPinned(r.id)
             return (
-              <button
+              <div
                 key={r.id}
                 onClick={() => { setReportType(r.id); setPreview(false) }}
-                className={`flex items-start gap-3 rounded-xl border p-4 text-left transition-all hover:shadow-sm
+                className={`group relative flex items-start justify-between gap-3 rounded-xl border p-4 text-left cursor-pointer transition-all hover:shadow-sm
                   ${active
                     ? 'border-primary bg-primary/5 shadow-sm ring-1 ring-primary/30'
                     : 'hover:border-primary/30 bg-card'
                   }`}
               >
-                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${r.gradient}`}>
-                  <Icon className={`h-5 w-5 ${r.color}`} />
+                <div className="flex items-start gap-3">
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${r.gradient}`}>
+                    <Icon className={`h-5 w-5 ${r.color}`} />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">{r.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{r.description}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-sm">{r.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{r.description}</p>
-                </div>
-              </button>
+
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    togglePinReport({ id: r.id, name: r.name })
+                    toast.success(isPinned ? `Unpinned ${r.name} from Dashboard` : `Pinned ${r.name} to Dashboard!`)
+                  }}
+                  className={`h-7 w-7 opacity-70 group-hover:opacity-100 transition-opacity ${
+                    isPinned ? 'text-amber-500 hover:text-amber-600' : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                  title={isPinned ? 'Unpin from Dashboard' : 'Pin to Dashboard'}
+                >
+                  <Pin className={`h-3.5 w-3.5 ${isPinned ? 'fill-current' : ''}`} />
+                </Button>
+              </div>
             )
           })}
         </div>

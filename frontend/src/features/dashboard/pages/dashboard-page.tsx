@@ -25,7 +25,10 @@ import { CategoryChart } from '../components/category-chart'
 import { RecentSales } from '../components/recent-sales'
 import { TopProducts } from '../components/top-products'
 import { LowStockAlert } from '../components/low-stock-alert'
+import { PinnedReportsWidget } from '../components/pinned-reports-widget'
+import { DashboardCustomizerToolbar, WidgetCardControls } from '../components/dashboard-customizer'
 import { useDashboard } from '../hooks/use-dashboard'
+import { useDashboardLayout } from '../hooks/use-dashboard-layout'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { getPrimaryRoleCategory } from '@/utils/permissions'
 import { formatCurrency, formatNumber } from '@/utils/format'
@@ -34,6 +37,19 @@ export function DashboardPage() {
   const { dashboardData, isLoading, refetch } = useDashboard()
   const { user } = useAuth()
   const roleCategory = getPrimaryRoleCategory(user)
+
+  const {
+    isEditMode,
+    setIsEditMode,
+    widgets,
+    allWidgets,
+    pinnedReports,
+    moveWidget,
+    resizeWidget,
+    toggleWidgetVisibility,
+    resetLayout,
+    togglePinReport,
+  } = useDashboardLayout()
 
   if (isLoading) {
     return (
@@ -66,9 +82,104 @@ export function DashboardPage() {
   const topProducts = dashboardData?.topProducts || []
   const lowStockItems = dashboardData?.lowStockItems || []
 
+  // Render individual widget component by ID
+  const renderWidgetContent = (widgetId: string) => {
+    switch (widgetId) {
+      case 'stats-summary':
+        return (
+          <div className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <StatCard
+                title="Total Revenue"
+                value={formatCurrency(stats.totalRevenue)}
+                change={12.5}
+                icon={DollarSign}
+                iconColor="text-success"
+                iconBgColor="bg-success/10"
+                trend="up"
+              />
+              <StatCard
+                title="Total Products"
+                value={formatNumber(stats.totalProducts)}
+                change={8.2}
+                icon={Package}
+                iconColor="text-primary"
+                iconBgColor="bg-primary/10"
+                trend="up"
+              />
+              <StatCard
+                title="Total Customers"
+                value={formatNumber(stats.totalCustomers)}
+                change={5.3}
+                icon={Users}
+                iconColor="text-info"
+                iconBgColor="bg-info/10"
+                trend="up"
+              />
+              <StatCard
+                title="Low Stock Items"
+                value={formatNumber(stats.lowStockItems)}
+                change={-2.1}
+                icon={AlertTriangle}
+                iconColor="text-warning"
+                iconBgColor="bg-warning/10"
+                trend="down"
+              />
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <StatCard
+                title="Total Profit"
+                value={formatCurrency(stats.totalProfit)}
+                change={15.8}
+                icon={TrendingUp}
+                iconColor="text-success"
+                iconBgColor="bg-success/10"
+                trend="up"
+              />
+              <StatCard
+                title="Pending Orders"
+                value={formatNumber(stats.pendingOrders)}
+                icon={ShoppingCart}
+                iconColor="text-warning"
+                iconBgColor="bg-warning/10"
+              />
+              <StatCard
+                title="Total Suppliers"
+                value={formatNumber(stats.totalSuppliers)}
+                icon={Warehouse}
+                iconColor="text-secondary"
+                iconBgColor="bg-secondary/10"
+              />
+            </div>
+          </div>
+        )
+      case 'sales-chart':
+        return <SalesChart data={salesChartData} description="Monthly sales overview" />
+      case 'revenue-chart':
+        return <RevenueChart data={revenueChartData} description="Monthly revenue trend" />
+      case 'category-chart':
+        return <CategoryChart data={categoryChartData} description="Distribution by category" />
+      case 'recent-sales':
+        return <RecentSales sales={recentSales} />
+      case 'top-products':
+        return <TopProducts products={topProducts} />
+      case 'low-stock-alert':
+        return <LowStockAlert items={lowStockItems} />
+      case 'pinned-reports':
+        return (
+          <PinnedReportsWidget
+            reports={pinnedReports}
+            onUnpin={(id) => togglePinReport({ id, name: '' })}
+          />
+        )
+      default:
+        return null
+    }
+  }
+
   return (
     <div className="space-y-6">
-      {/* Header with Role Banner */}
+      {/* Header with Role Banner & Customizer */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -114,331 +225,55 @@ export function DashboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button onClick={() => refetch()} variant="outline" size="sm">
-            <RefreshCw className="mr-2 h-4 w-4" />
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Customizer Toolbar */}
+          <DashboardCustomizerToolbar
+            isEditMode={isEditMode}
+            setIsEditMode={setIsEditMode}
+            allWidgets={allWidgets}
+            resetLayout={resetLayout}
+            toggleWidgetVisibility={toggleWidgetVisibility}
+          />
+
+          <Button onClick={() => refetch()} variant="outline" size="sm" className="text-xs">
+            <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
             Refresh
           </Button>
-
-          {/* Role-Specific Primary Shortcuts */}
-          {roleCategory === 'super-admin' && (
-            <Button asChild size="sm" className="bg-gradient-to-r from-primary to-purple-600">
-              <Link to="/products/new">
-                <Plus className="mr-1 h-4 w-4" /> Add Product
-              </Link>
-            </Button>
-          )}
-          {roleCategory === 'sales-officer' && (
-            <Button asChild size="sm" className="bg-success text-white hover:bg-success/90">
-              <Link to="/sales/pos">
-                <Zap className="mr-1 h-4 w-4" /> POS Terminal
-              </Link>
-            </Button>
-          )}
-          {roleCategory === 'inventory-manager' && (
-            <Button asChild size="sm">
-              <Link to="/products/new">
-                <Plus className="mr-1 h-4 w-4" /> Add Product
-              </Link>
-            </Button>
-          )}
-          {roleCategory === 'procurement-officer' && (
-            <Button asChild size="sm">
-              <Link to="/purchases">
-                <FileText className="mr-1 h-4 w-4" /> New Order
-              </Link>
-            </Button>
-          )}
-          {roleCategory === 'finance-manager' && (
-            <Button asChild size="sm" variant="secondary">
-              <Link to="/reports">
-                <BarChart3 className="mr-1 h-4 w-4" /> Export Reports
-              </Link>
-            </Button>
-          )}
         </div>
       </div>
 
-      {/* ========================================================================= */}
-      {/* 1. SUPER ADMINISTRATOR DASHBOARD (Supersedes all roles)                  */}
-      {/* ========================================================================= */}
-      {roleCategory === 'super-admin' && (
-        <>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <StatCard
-              title="Total Revenue"
-              value={formatCurrency(stats.totalRevenue)}
-              change={12.5}
-              icon={DollarSign}
-              iconColor="text-success"
-              iconBgColor="bg-success/10"
-              trend="up"
-            />
-            <StatCard
-              title="Total Products"
-              value={formatNumber(stats.totalProducts)}
-              change={8.2}
-              icon={Package}
-              iconColor="text-primary"
-              iconBgColor="bg-primary/10"
-              trend="up"
-            />
-            <StatCard
-              title="Total Customers"
-              value={formatNumber(stats.totalCustomers)}
-              change={5.3}
-              icon={Users}
-              iconColor="text-info"
-              iconBgColor="bg-info/10"
-              trend="up"
-            />
-            <StatCard
-              title="Low Stock Items"
-              value={formatNumber(stats.lowStockItems)}
-              change={-2.1}
-              icon={AlertTriangle}
-              iconColor="text-warning"
-              iconBgColor="bg-warning/10"
-              trend="down"
-            />
+      {/* Customizable Dashboard Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {widgets.map((widget, idx) => (
+          <div
+            key={widget.id}
+            className={`relative transition-all duration-300 ${
+              widget.span === 'col-span-full'
+                ? 'md:col-span-3'
+                : widget.span === 'col-span-3'
+                ? 'md:col-span-3'
+                : widget.span === 'col-span-2'
+                ? 'md:col-span-2'
+                : 'md:col-span-1'
+            } ${isEditMode ? 'ring-2 ring-dashed ring-primary/40 rounded-xl p-2 bg-primary/5' : ''} ${
+              !widget.visible && isEditMode ? 'opacity-40' : ''
+            }`}
+          >
+            {isEditMode && (
+              <WidgetCardControls
+                widget={widget}
+                isFirst={idx === 0}
+                isLast={idx === widgets.length - 1}
+                onMoveUp={() => moveWidget(widget.id, 'up')}
+                onMoveDown={() => moveWidget(widget.id, 'down')}
+                onResize={(span) => resizeWidget(widget.id, span)}
+                onToggleVisibility={() => toggleWidgetVisibility(widget.id)}
+              />
+            )}
+            {renderWidgetContent(widget.id)}
           </div>
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <StatCard
-              title="Total Profit"
-              value={formatCurrency(stats.totalProfit)}
-              change={15.8}
-              icon={TrendingUp}
-              iconColor="text-success"
-              iconBgColor="bg-success/10"
-              trend="up"
-            />
-            <StatCard
-              title="Pending Orders"
-              value={formatNumber(stats.pendingOrders)}
-              icon={ShoppingCart}
-              iconColor="text-warning"
-              iconBgColor="bg-warning/10"
-            />
-            <StatCard
-              title="Total Suppliers"
-              value={formatNumber(stats.totalSuppliers)}
-              icon={Warehouse}
-              iconColor="text-secondary"
-              iconBgColor="bg-secondary/10"
-            />
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <SalesChart data={salesChartData} description="Monthly sales overview" />
-            <RevenueChart data={revenueChartData} description="Monthly revenue trend" />
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <CategoryChart data={categoryChartData} description="Distribution by category" />
-            <RecentSales sales={recentSales} />
-            <TopProducts products={topProducts} />
-          </div>
-
-          <LowStockAlert items={lowStockItems} />
-        </>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 2. INVENTORY MANAGER DASHBOARD                                            */}
-      {/* ========================================================================= */}
-      {roleCategory === 'inventory-manager' && (
-        <>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <StatCard
-              title="Total Products"
-              value={formatNumber(stats.totalProducts)}
-              icon={Package}
-              iconColor="text-primary"
-              iconBgColor="bg-primary/10"
-            />
-            <StatCard
-              title="Low Stock Items"
-              value={formatNumber(stats.lowStockItems)}
-              icon={AlertTriangle}
-              iconColor="text-warning"
-              iconBgColor="bg-warning/10"
-              trend="down"
-            />
-            <StatCard
-              title="Out of Stock Items"
-              value={formatNumber(stats.outOfStockItems)}
-              icon={AlertTriangle}
-              iconColor="text-destructive"
-              iconBgColor="bg-destructive/10"
-            />
-            <StatCard
-              title="Total Inventory Value"
-              value={formatCurrency(stats.totalInventoryValue)}
-              icon={DollarSign}
-              iconColor="text-success"
-              iconBgColor="bg-success/10"
-            />
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <TopProducts products={topProducts} />
-            <CategoryChart data={categoryChartData} description="Inventory distribution" />
-          </div>
-
-          <LowStockAlert items={lowStockItems} />
-        </>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 3. PROCUREMENT OFFICER DASHBOARD                                         */}
-      {/* ========================================================================= */}
-      {roleCategory === 'procurement-officer' && (
-        <>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <StatCard
-              title="Pending Purchase Orders"
-              value={formatNumber(stats.pendingOrders)}
-              icon={FileText}
-              iconColor="text-warning"
-              iconBgColor="bg-warning/10"
-            />
-            <StatCard
-              title="Total Suppliers"
-              value={formatNumber(stats.totalSuppliers)}
-              icon={Building2}
-              iconColor="text-info"
-              iconBgColor="bg-info/10"
-            />
-            <StatCard
-              title="Low Stock Requiring Orders"
-              value={formatNumber(stats.lowStockItems)}
-              icon={AlertTriangle}
-              iconColor="text-destructive"
-              iconBgColor="bg-destructive/10"
-            />
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <LowStockAlert items={lowStockItems} />
-            <TopProducts products={topProducts} />
-          </div>
-        </>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 4. SALES & POS OFFICER DASHBOARD                                          */}
-      {/* ========================================================================= */}
-      {roleCategory === 'sales-officer' && (
-        <>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <StatCard
-              title="Total Sales Revenue"
-              value={formatCurrency(stats.totalRevenue)}
-              change={12.5}
-              icon={DollarSign}
-              iconColor="text-success"
-              iconBgColor="bg-success/10"
-              trend="up"
-            />
-            <StatCard
-              title="Pending Sales Orders"
-              value={formatNumber(stats.pendingOrders)}
-              icon={ShoppingCart}
-              iconColor="text-warning"
-              iconBgColor="bg-warning/10"
-            />
-            <StatCard
-              title="Total Customers"
-              value={formatNumber(stats.totalCustomers)}
-              icon={Users}
-              iconColor="text-info"
-              iconBgColor="bg-info/10"
-            />
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <RecentSales sales={recentSales} />
-            <TopProducts products={topProducts} />
-            <SalesChart data={salesChartData} description="Recent Sales Trends" />
-          </div>
-        </>
-      )}
-
-      {/* ========================================================================= */}
-      {/* 5. FINANCE & REPORTS MANAGER DASHBOARD                                    */}
-      {/* ========================================================================= */}
-      {roleCategory === 'finance-manager' && (
-        <>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <StatCard
-              title="Total Revenue"
-              value={formatCurrency(stats.totalRevenue)}
-              change={12.5}
-              icon={DollarSign}
-              iconColor="text-success"
-              iconBgColor="bg-success/10"
-              trend="up"
-            />
-            <StatCard
-              title="Total Net Profit"
-              value={formatCurrency(stats.totalProfit)}
-              change={15.8}
-              icon={TrendingUp}
-              iconColor="text-success"
-              iconBgColor="bg-success/10"
-              trend="up"
-            />
-            <StatCard
-              title="Total Expenses"
-              value={formatCurrency(stats.totalExpenses)}
-              icon={CreditCard}
-              iconColor="text-warning"
-              iconBgColor="bg-warning/10"
-            />
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <RevenueChart data={revenueChartData} description="Monthly Revenue & Expense" />
-            <SalesChart data={salesChartData} description="Monthly Sales Volume" />
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <CategoryChart data={categoryChartData} description="Revenue distribution by category" />
-            <RecentSales sales={recentSales} />
-          </div>
-        </>
-      )}
-
-      {/* Fallback for general user */}
-      {roleCategory === 'general-user' && (
-        <>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <StatCard
-              title="Total Products"
-              value={formatNumber(stats.totalProducts)}
-              icon={Package}
-              iconColor="text-primary"
-              iconBgColor="bg-primary/10"
-            />
-            <StatCard
-              title="Low Stock Items"
-              value={formatNumber(stats.lowStockItems)}
-              icon={AlertTriangle}
-              iconColor="text-warning"
-              iconBgColor="bg-warning/10"
-            />
-            <StatCard
-              title="Pending Orders"
-              value={formatNumber(stats.pendingOrders)}
-              icon={ShoppingCart}
-              iconColor="text-info"
-              iconBgColor="bg-info/10"
-            />
-          </div>
-          <TopProducts products={topProducts} />
-        </>
-      )}
+        ))}
+      </div>
     </div>
   )
 }
