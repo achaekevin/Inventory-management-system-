@@ -6,7 +6,6 @@ import { CoreModules } from '@/components/landing/CoreModules';
 import { Benefits } from '@/components/landing/Benefits';
 import { HowItWorks } from '@/components/landing/HowItWorks';
 import { FAQ } from '@/components/landing/FAQ';
-import { CTA } from '@/components/landing/CTA';
 import { Footer } from '@/components/landing/Footer';
 
 export function LandingPage() {
@@ -44,7 +43,6 @@ export function LandingPage() {
         <div id="faq">
           <FAQ />
         </div>
-        <CTA />
       </main>
       <Footer />
     </div>

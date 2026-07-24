@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Play, Shield, Zap, Lock, TrendingUp } from 'lucide-react';
+import { ArrowRight, Shield, Zap, Lock, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -93,14 +93,6 @@ export function Hero() {
               >
                 Get Started Free
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-base group"
-              >
-                <Play className="mr-2 w-4 h-4 group-hover:scale-110 transition-transform" />
-                Watch Demo
               </Button>
             </motion.div>
 
