@@ -56,3 +56,6 @@ Thumbs.db
 
 # Keep .env.example for reference
 !.env.example
+
+# Uploaded user files - never commit
+uploads/
