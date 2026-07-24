@@ -32,6 +32,7 @@ import reorderRoutes from './modules/reorder/reorder.routes';
 import workflowRoutes from './modules/workflow/workflow.routes';
 import creditRoutes from './modules/credit/credit.routes';
 import automationRoutes from './modules/automation/automation.routes';
+import documentsRoutes from './modules/documents/documents.routes';
 
 const app: Application = express();
 
@@ -145,6 +146,10 @@ app.use('/api/reorder', reorderRoutes);
 app.use('/api/workflow', workflowRoutes);
 app.use('/api/credit', creditRoutes);
 app.use('/api/automation', automationRoutes);
+app.use('/api/documents', documentsRoutes);
+
+// Serve uploaded files as static assets
+app.use('/uploads', express.static('uploads'));
 
 // Welcome route
 app.get('/', (_req: Request, res: Response) => {
