@@ -816,3 +816,25 @@ model AutomationLog {
   @@index([createdAt])
   @@map("automation_logs")
 }
+
+// ==================== DOCUMENT MANAGEMENT ====================
+
+model Document {
+  id          String   @id @default(uuid())
+  entityType  String   // product | supplier | customer | purchase | sale
+  entityId    String
+  fileName    String   // original name shown to user
+  storedName  String   // UUID-based name on disk
+  mimeType    String
+  size        Int      // bytes
+  path        String   // relative path under uploads/
+  description String?  @db.Text
+  uploadedBy  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([entityType, entityId])
+  @@index([uploadedBy])
+  @@index([createdAt])
+  @@map("documents")
+}
