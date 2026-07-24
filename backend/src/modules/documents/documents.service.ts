@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import prisma from '../../config/database';
-import { NotFoundError, BadRequestError } from '../errors/AppError';
+import { NotFoundError, BadRequestError } from '../../common/errors/AppError';
 import logger from '../../config/logger';
 
 export type DocumentEntityType = 'product' | 'supplier' | 'customer' | 'purchase' | 'sale';
