@@ -18,6 +18,7 @@ import {
   Zap,
   ClipboardList,
   Bot,
+  FolderOpen,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/store/ui-store'
@@ -104,6 +105,11 @@ const navigation: NavItem[] = [
     title: 'Automation',
     href: '/automation',
     icon: Bot,
+  },
+  {
+    title: 'Documents',
+    href: '/documents',
+    icon: FolderOpen,
   },
   {
     title: 'Credit',
