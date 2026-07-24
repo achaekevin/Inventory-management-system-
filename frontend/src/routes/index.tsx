@@ -29,6 +29,8 @@ import { SmartReorderPage } from '@/features/reorder/pages/smart-reorder-page'
 import { PurchaseApprovalPage } from '@/features/workflow/pages/purchase-approval-page'
 import { CustomerCreditPage } from '@/features/credit/pages/customer-credit-page'
 import { WorkflowAutomationPage } from '@/features/automation/pages/workflow-automation-page'
+import { DocumentsPage } from '@/features/documents/pages/documents-page'
+import { SaleDetailPage } from '@/features/sales/pages/sale-detail-page'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -238,6 +240,16 @@ export const router = createBrowserRouter([
       {
         path: 'automation',
         element: <WorkflowAutomationPage />,
+      },
+      // Document Management
+      {
+        path: 'documents',
+        element: <DocumentsPage />,
+      },
+      // Sale Detail
+      {
+        path: 'sales/:id',
+        element: <SaleDetailPage />,
       },
       // Profile
       {
