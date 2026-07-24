@@ -31,6 +31,7 @@ import dashboardRoutes from './modules/dashboard/dashboard.routes';
 import reorderRoutes from './modules/reorder/reorder.routes';
 import workflowRoutes from './modules/workflow/workflow.routes';
 import creditRoutes from './modules/credit/credit.routes';
+import automationRoutes from './modules/automation/automation.routes';
 
 const app: Application = express();
 
@@ -143,6 +144,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reorder', reorderRoutes);
 app.use('/api/workflow', workflowRoutes);
 app.use('/api/credit', creditRoutes);
+app.use('/api/automation', automationRoutes);
 
 // Welcome route
 app.get('/', (_req: Request, res: Response) => {
