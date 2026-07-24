@@ -3,6 +3,7 @@ import { Sidebar } from '@/components/layout/sidebar'
 import { Header } from '@/components/layout/header'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { CommandPalette } from '@/components/shared/command-palette'
+import { OfflineBanner } from '@/components/shared/offline-banner'
 import { useUIStore } from '@/store/ui-store'
 import { cn } from '@/lib/utils'
 
@@ -19,6 +20,7 @@ export function MainLayout() {
           isSidebarCollapsed ? 'ml-16' : 'ml-64'
         )}
       >
+        <OfflineBanner />
         <Header />
         
         <main className="flex-1 p-6">

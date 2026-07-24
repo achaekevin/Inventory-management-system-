@@ -28,6 +28,7 @@ export function POSPage() {
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card' | 'bank_transfer'>('cash')
 
   const { mutate: createSale, isPending } = useCreateSale()
+  const { isOnline, queueTransaction } = useOffline()
 
   // Mock product search by barcode (replace with actual API call)
   const searchProduct = (code: string) => {
@@ -60,14 +61,14 @@ export function POSPage() {
     }
   }
 
-  const updateQuantity = (productId: string, change: number) => {
+  const updateQuantity = (productId: string, delta: number) => {
     setCart(cart.map(item => {
       if (item.productId === productId) {
-        const newQuantity = Math.max(1, item.quantity + change)
-        return { ...item, quantity: newQuantity }
+        const newQty = item.quantity + delta
+        return newQty > 0 ? { ...item, quantity: newQty } : null
       }
       return item
-    }))
+    }).filter(Boolean) as CartItem[])
   }
 
   const removeFromCart = (productId: string) => {
@@ -84,7 +85,7 @@ export function POSPage() {
     return { subtotal, discountAmount, tax, total }
   }
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     const { subtotal, discountAmount, tax, total } = calculateTotals()
 
     const saleData = {
@@ -103,6 +104,14 @@ export function POSPage() {
       paymentStatus: 'paid' as const,
     }
 
+    if (!isOnline) {
+      await queueTransaction('create_sale', '/sales', saleData)
+      setCart([])
+      setDiscount(0)
+      setCustomerId('')
+      return
+    }
+
     createSale(saleData, {
       onSuccess: () => {
         setCart([])
@@ -110,6 +119,13 @@ export function POSPage() {
         setCustomerId('')
         alert('Sale completed successfully!')
       },
+      onError: async () => {
+        // Fallback to offline queue if API network call fails
+        await queueTransaction('create_sale', '/sales', saleData)
+        setCart([])
+        setDiscount(0)
+        setCustomerId('')
+      }
     })
   }
 

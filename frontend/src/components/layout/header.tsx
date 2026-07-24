@@ -1,4 +1,4 @@
-import { Bell, Search, Menu, Sun, Moon, Laptop, LogOut, User, Settings, Lock } from 'lucide-react'
+import { Bell, Search, Menu, Sun, Moon, Laptop, LogOut, User, Settings, Lock, Wifi, WifiOff, RefreshCw } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,6 +19,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { useUIStore } from '@/store/ui-store'
 import { useAuth } from '@/features/auth/hooks/use-auth'
+import { useOffline } from '@/hooks/use-offline'
 import { getInitials } from '@/utils/format'
 import { cn } from '@/lib/utils'
 
@@ -31,6 +32,7 @@ export function Header() {
   } = useUIStore()
   
   const { user, logout } = useAuth()
+  const { isOnline, isSyncing, pendingCount, syncNow } = useOffline()
 
   const handleThemeChange = (value: string) => {
     setTheme(value as 'light' | 'dark' | 'system')
@@ -65,6 +67,35 @@ export function Header() {
       </Button>
 
       <div className="ml-auto flex items-center gap-2">
+        {/* Offline / Online Status Indicator */}
+        {!isOnline ? (
+          <Badge
+            variant="outline"
+            className="gap-1 border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs px-2.5 py-1"
+          >
+            <WifiOff className="h-3.5 w-3.5 animate-pulse" />
+            <span>Offline {pendingCount > 0 && `(${pendingCount})`}</span>
+          </Badge>
+        ) : pendingCount > 0 ? (
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={syncNow}
+            disabled={isSyncing}
+            className="h-8 gap-1.5 text-xs border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+            <span>Sync {pendingCount} Offline</span>
+          </Button>
+        ) : (
+          <Badge
+            variant="outline"
+            className="hidden sm:inline-flex gap-1 border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[11px] px-2 py-0.5"
+          >
+            <Wifi className="h-3 w-3" />
+            Online
+          </Badge>
+        )}
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
