@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useProduct, useCreateProduct, useUpdateProduct } from '../hooks/use-products'
+import { DocumentPanel } from '@/features/documents/components/document-panel'
 
 const productSchema = z.object({
   name: z.string().min(1, 'Product name is required'),
@@ -247,6 +248,11 @@ export function ProductFormPage() {
           </Button>
         </div>
       </form>
+
+      {/* Documents & Attachments — only shown when editing an existing product */}
+      {isEdit && id && (
+        <DocumentPanel entityType="product" entityId={id} />
+      )}
     </div>
   )
 }
