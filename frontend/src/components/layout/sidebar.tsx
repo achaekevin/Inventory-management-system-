@@ -17,6 +17,7 @@ import {
   UserCog,
   Zap,
   ClipboardList,
+  Bot,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/store/ui-store'
@@ -98,6 +99,11 @@ const navigation: NavItem[] = [
     title: 'Approvals',
     href: '/approvals',
     icon: ClipboardList,
+  },
+  {
+    title: 'Automation',
+    href: '/automation',
+    icon: Bot,
   },
   {
     title: 'Credit',
