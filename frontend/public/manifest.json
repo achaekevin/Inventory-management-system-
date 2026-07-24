@@ -1,0 +1,18 @@
+{
+  "short_name": "InvenTrack",
+  "name": "InventoryPro - Enterprise Inventory Management System",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any 192x192 512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "description": "Enterprise-grade inventory management system with offline transaction recording and auto-sync."
+}
