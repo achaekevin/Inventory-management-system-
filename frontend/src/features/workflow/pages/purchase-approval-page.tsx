@@ -37,6 +37,7 @@ import {
   useReceiveGoods,
 } from '../hooks/use-workflow'
 import type { WorkflowPurchase, WorkflowStatus, ApprovalStep } from '../services/workflow-service'
+import { DocumentPanel } from '@/features/documents/components/document-panel'
 
 // ─── Status config ────────────────────────────────────────────────────────────
 
@@ -392,6 +393,13 @@ function PurchaseDetailPanel({
           })}
         </div>
       )}
+
+      {/* Documents attached to this purchase order */}
+      <DocumentPanel
+        entityType="purchase"
+        entityId={purchaseId}
+        defaultCollapsed={true}
+      />
     </div>
   )
 }
