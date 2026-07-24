@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useSupplier, useCreateSupplier, useUpdateSupplier } from '../hooks/use-suppliers'
+import { DocumentPanel } from '@/features/documents/components/document-panel'
 
 const supplierSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -216,6 +217,10 @@ export function SupplierFormPage() {
           </Button>
         </div>
       </form>
+
+      {isEdit && id && (
+        <DocumentPanel entityType="supplier" entityId={id} />
+      )}
     </div>
   )
 }
