@@ -35,6 +35,7 @@ import automationRoutes from './modules/automation/automation.routes';
 import documentsRoutes from './modules/documents/documents.routes';
 import searchRoutes from './modules/search/search.routes';
 import localizationRoutes from './modules/localization/localization.routes';
+import securityRoutes from './modules/security/security.routes';
 
 const app: Application = express();
 
@@ -151,6 +152,7 @@ app.use('/api/automation', automationRoutes);
 app.use('/api/documents', documentsRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/localization', localizationRoutes);
+app.use('/api/security', securityRoutes);
 
 // Serve uploaded files as static assets
 app.use('/uploads', express.static('uploads'));
