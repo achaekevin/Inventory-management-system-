@@ -33,6 +33,7 @@ import { DocumentsPage } from '@/features/documents/pages/documents-page'
 import { SaleDetailPage } from '@/features/sales/pages/sale-detail-page'
 import { SearchPage } from '@/pages/search-page'
 import { LocalizationSettingsPage } from '@/features/localization/pages/localization-settings-page'
+import { SecurityCenterPage } from '@/features/security/pages/security-center-page'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -267,6 +268,11 @@ export const router = createBrowserRouter([
       {
         path: 'localization',
         element: <LocalizationSettingsPage />,
+      },
+      // Security Center
+      {
+        path: 'security-center',
+        element: <SecurityCenterPage />,
       },
     ],
   },
