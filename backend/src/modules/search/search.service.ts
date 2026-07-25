@@ -178,7 +178,7 @@ export class SearchService {
       suppliersList = suppliers.map((s) => ({
         id: s.id,
         type: 'supplier',
-        title: s.name || s.companyName || s.email,
+        title: s.name || s.companyName || s.email || 'Supplier',
         subtitle: `${s.email} | ${s.phone}`,
         url: `/suppliers`,
         status: s.isActive ? 'active' : 'inactive',
@@ -486,7 +486,7 @@ export class SearchService {
       suggestions.push({
         id: s.id,
         type: 'supplier',
-        title: s.name || s.companyName,
+        title: s.name || s.companyName || 'Supplier',
         subtitle: `Supplier`,
         url: `/suppliers`,
         status: 'active',
