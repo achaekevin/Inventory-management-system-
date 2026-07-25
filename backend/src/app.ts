@@ -38,6 +38,7 @@ import localizationRoutes from './modules/localization/localization.routes';
 import securityRoutes from './modules/security/security.routes';
 import activityRoutes from './modules/activity/activity.routes';
 import externalApiRoutes from './modules/external-api/external-api.routes';
+import inventoryHeatmapRoutes from './modules/inventory-heatmap/inventory-heatmap.routes';
 
 const app: Application = express();
 
@@ -157,6 +158,7 @@ app.use('/api/localization', localizationRoutes);
 app.use('/api/security', securityRoutes);
 app.use('/api/activity', activityRoutes);
 app.use('/api/v1/external', externalApiRoutes);
+app.use('/api/inventory-heatmap', inventoryHeatmapRoutes);
 
 // Serve uploaded files as static assets
 app.use('/uploads', express.static('uploads'));
