@@ -31,6 +31,7 @@ import { CustomerCreditPage } from '@/features/credit/pages/customer-credit-page
 import { WorkflowAutomationPage } from '@/features/automation/pages/workflow-automation-page'
 import { DocumentsPage } from '@/features/documents/pages/documents-page'
 import { SaleDetailPage } from '@/features/sales/pages/sale-detail-page'
+import { SearchPage } from '@/pages/search-page'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -255,6 +256,11 @@ export const router = createBrowserRouter([
       {
         path: 'profile',
         element: <ProfilePage />,
+      },
+      // Search
+      {
+        path: 'search',
+        element: <SearchPage />,
       },
     ],
   },
