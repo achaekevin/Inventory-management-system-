@@ -37,6 +37,7 @@ import { SecurityCenterPage } from '@/features/security/pages/security-center-pa
 import { ActivityTimelinePage } from '@/features/activity/pages/activity-timeline-page'
 import { ApiDocsPage } from '@/features/external-api/pages/api-docs-page'
 import { InventoryHeatmapPage } from '@/features/inventory-heatmap/pages/inventory-heatmap-page'
+import { BatchesListPage } from '@/features/batches/pages/batches-list-page'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -291,6 +292,11 @@ export const router = createBrowserRouter([
       {
         path: 'inventory-heatmap',
         element: <InventoryHeatmapPage />,
+      },
+      // Batch & Lot Tracking
+      {
+        path: 'batches',
+        element: <BatchesListPage />,
       },
     ],
   },
