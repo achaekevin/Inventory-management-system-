@@ -32,6 +32,7 @@ import { WorkflowAutomationPage } from '@/features/automation/pages/workflow-aut
 import { DocumentsPage } from '@/features/documents/pages/documents-page'
 import { SaleDetailPage } from '@/features/sales/pages/sale-detail-page'
 import { SearchPage } from '@/pages/search-page'
+import { LocalizationSettingsPage } from '@/features/localization/pages/localization-settings-page'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -261,6 +262,11 @@ export const router = createBrowserRouter([
       {
         path: 'search',
         element: <SearchPage />,
+      },
+      // Localization
+      {
+        path: 'localization',
+        element: <LocalizationSettingsPage />,
       },
     ],
   },
