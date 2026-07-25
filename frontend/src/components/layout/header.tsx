@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/badge'
 import { useUIStore } from '@/store/ui-store'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useOffline } from '@/hooks/use-offline'
+import { LanguageCurrencySelector } from './language-currency-selector'
 import { getInitials } from '@/utils/format'
 import { cn } from '@/lib/utils'
 
@@ -145,6 +146,9 @@ export function Header() {
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Language & Currency Selector */}
+        <LanguageCurrencySelector />
 
         {/* Theme Switcher */}
         <DropdownMenu>
