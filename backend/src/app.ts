@@ -33,6 +33,7 @@ import workflowRoutes from './modules/workflow/workflow.routes';
 import creditRoutes from './modules/credit/credit.routes';
 import automationRoutes from './modules/automation/automation.routes';
 import documentsRoutes from './modules/documents/documents.routes';
+import searchRoutes from './modules/search/search.routes';
 
 const app: Application = express();
 
@@ -147,6 +148,7 @@ app.use('/api/workflow', workflowRoutes);
 app.use('/api/credit', creditRoutes);
 app.use('/api/automation', automationRoutes);
 app.use('/api/documents', documentsRoutes);
+app.use('/api/search', searchRoutes);
 
 // Serve uploaded files as static assets
 app.use('/uploads', express.static('uploads'));
