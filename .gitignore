@@ -90,23 +90,22 @@ backend/prisma/migrations/
 .yarn/install-state.gz
 .pnp.*
 
-# Lock files (optional - uncomment if you don't want them tracked)
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
+# Lock files
+/package-lock.json
+package-lock.json
 
-# Documentation files (as requested)
-# Exclude all markdown files except essential ones
+# Documentation files
 *.md
-!README.md
-!CONTRIBUTING.md
-!LICENSE.md
-!CHANGELOG.md
-# Exclude AI assistant skill files
 .agents/**/*.md
 .claude/**/*.md
 .windsurf/**/*.md
 .cursor/**/*.md
+
+# Credentials & secrets
+*credential*
+*secret*
+*.pem
+*.key
 
 # Keep .env.example for reference
 !.env.example
