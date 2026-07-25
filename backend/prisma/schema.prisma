@@ -235,6 +235,7 @@ model Product {
   purchaseItems   PurchaseItem[]
   saleItems       SaleItem[]
   priceHistory    PriceHistory[]
+  batches         ProductBatch[]
 
   @@index([slug])
   @@index([sku])
@@ -837,4 +838,94 @@ model Document {
   @@index([uploadedBy])
   @@index([createdAt])
   @@map("documents")
+}
+
+// ==================== BATCH & LOT TRACKING ====================
+
+model ProductBatch {
+  id              String    @id @default(uuid())
+  batchNumber     String    @unique
+  productId       String
+  supplierBatch   String?
+  mfgDate         DateTime?
+  expiryDate      DateTime?
+  quantity        Int       @default(0)
+  initialQuantity Int       @default(0)
+  status          String    @default("active") // active | expiring_soon | expired | recalled | depleted
+  notes           String?   @db.Text
+  supplierId      String?
+  warehouseId     String?
+  createdBy       String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+
+  // Relations
+  product         Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
+  supplier        Supplier?        @relation(fields: [supplierId], references: [id])
+  movements       BatchMovement[]
+  recalls         BatchRecallItem[]
+
+  @@index([batchNumber])
+  @@index([productId])
+  @@index([expiryDate])
+  @@index([status])
+  @@map("product_batches")
+}
+
+model BatchMovement {
+  id          String   @id @default(uuid())
+  batchId     String
+  type        String   // IN, OUT, ADJUSTMENT, RECALL, EXPIRED
+  quantity    Int
+  reason      String?
+  referenceId String?
+  notes       String?  @db.Text
+  createdBy   String
+  createdAt   DateTime @default(now())
+
+  // Relations
+  batch ProductBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([batchId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("batch_movements")
+}
+
+model BatchRecall {
+  id           String   @id @default(uuid())
+  recallNumber String   @unique
+  reason       String
+  severity     String   @default("high") // low | medium | high | critical
+  status       String   @default("active") // active | in_progress | completed | cancelled
+  description  String?  @db.Text
+  recalledBy   String
+  recalledAt   DateTime @default(now())
+  resolvedAt   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  items BatchRecallItem[]
+
+  @@index([recallNumber])
+  @@index([status])
+  @@map("batch_recalls")
+}
+
+model BatchRecallItem {
+  id               String   @id @default(uuid())
+  recallId         String
+  batchId          String
+  quantityRecalled Int
+  disposition      String   @default("quarantine") // quarantine | destroyed | returned_to_supplier
+  notes            String?  @db.Text
+  createdAt        DateTime @default(now())
+
+  recall BatchRecall  @relation(fields: [recallId], references: [id], onDelete: Cascade)
+  batch  ProductBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([recallId])
+  @@index([batchId])
+  @@map("batch_recall_items")
 }
