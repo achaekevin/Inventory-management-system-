@@ -36,6 +36,7 @@ import documentsRoutes from './modules/documents/documents.routes';
 import searchRoutes from './modules/search/search.routes';
 import localizationRoutes from './modules/localization/localization.routes';
 import securityRoutes from './modules/security/security.routes';
+import activityRoutes from './modules/activity/activity.routes';
 
 const app: Application = express();
 
@@ -153,6 +154,7 @@ app.use('/api/documents', documentsRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/localization', localizationRoutes);
 app.use('/api/security', securityRoutes);
+app.use('/api/activity', activityRoutes);
 
 // Serve uploaded files as static assets
 app.use('/uploads', express.static('uploads'));
