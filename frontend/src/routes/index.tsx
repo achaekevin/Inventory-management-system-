@@ -34,6 +34,9 @@ import { SaleDetailPage } from '@/features/sales/pages/sale-detail-page'
 import { SearchPage } from '@/pages/search-page'
 import { LocalizationSettingsPage } from '@/features/localization/pages/localization-settings-page'
 import { SecurityCenterPage } from '@/features/security/pages/security-center-page'
+import { ActivityTimelinePage } from '@/features/activity/pages/activity-timeline-page'
+import { ApiDocsPage } from '@/features/external-api/pages/api-docs-page'
+import { InventoryHeatmapPage } from '@/features/inventory-heatmap/pages/inventory-heatmap-page'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -273,6 +276,21 @@ export const router = createBrowserRouter([
       {
         path: 'security-center',
         element: <SecurityCenterPage />,
+      },
+      // Activity Timeline
+      {
+        path: 'activity-timeline',
+        element: <ActivityTimelinePage />,
+      },
+      // External REST API Docs
+      {
+        path: 'api-docs',
+        element: <ApiDocsPage />,
+      },
+      // Inventory Heat Map
+      {
+        path: 'inventory-heatmap',
+        element: <InventoryHeatmapPage />,
       },
     ],
   },
