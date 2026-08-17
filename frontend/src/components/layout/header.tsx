@@ -10,28 +10,23 @@ import {
   DropdownMenuTrigger,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent,
-  DropdownMenuPortal,
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { useUIStore } from '@/store/ui-store'
 import { useAuth } from '@/features/auth/hooks/use-auth'
 import { useOffline } from '@/hooks/use-offline'
+import { useTheme } from '@/contexts/ThemeContext'
 import { LanguageCurrencySelector } from './language-currency-selector'
 import { getInitials } from '@/utils/format'
-import { cn } from '@/lib/utils'
 
 export function Header() {
   const { 
     toggleSidebar, 
     setCommandPaletteOpen,
-    theme,
-    setTheme,
   } = useUIStore()
   
+  const { theme, setTheme } = useTheme()
   const { user, logout } = useAuth()
   const { isOnline, isSyncing, pendingCount, syncNow } = useOffline()
 
