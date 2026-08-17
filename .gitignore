@@ -96,6 +96,7 @@ package-lock.json
 
 # Documentation files
 *.md
+!README.md
 .agents/**/*.md
 .claude/**/*.md
 .windsurf/**/*.md
