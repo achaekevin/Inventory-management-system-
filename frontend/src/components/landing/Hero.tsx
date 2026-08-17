@@ -1,248 +1,160 @@
-import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Zap, Lock, TrendingUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { useState, useEffect } from 'react';
 
-const floatingFeatures = [
-  { icon: Shield, label: 'Secure & Reliable', color: 'from-green-500 to-emerald-600' },
-  { icon: Zap, label: 'Lightning Fast', color: 'from-yellow-500 to-orange-600' },
-  { icon: Lock, label: 'RBAC Enabled', color: 'from-blue-500 to-cyan-600' },
-  { icon: TrendingUp, label: 'Real-time Analytics', color: 'from-purple-500 to-pink-600' },
+const features = [
+  {
+    id: 1,
+    title: 'Navigate through every feature',
+    description: 'Seamlessly manage inventory, track stock, and monitor your warehouse operations with real-time insights.',
+    image: 'https://images.unsplash.com/photo-1553413077-190dd305871c?w=1920&q=80',
+  },
+  {
+    id: 2,
+    title: 'Real-Time Stock Tracking',
+    description: 'Monitor inventory levels across multiple warehouses with live updates and automated alerts.',
+    image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1920&q=80',
+  },
+  {
+    id: 3,
+    title: 'Advanced Analytics Dashboard',
+    description: 'Make data-driven decisions with comprehensive reports and actionable insights.',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=80',
+  },
+  {
+    id: 4,
+    title: 'Efficient Order Management',
+    description: 'Streamline your sales process from order creation to fulfillment and invoicing.',
+    image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=1920&q=80',
+  },
 ];
 
 export function Hero() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % features.length);
+    }, 6000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % features.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + features.length) % features.length);
+  };
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Background Elements */}
-      <div className="absolute inset-0 -z-10">
-        {/* Gradient Orbs */}
+    <section className="relative h-screen w-full overflow-hidden pt-16">
+      {/* Background Carousel */}
+      <AnimatePresence mode="wait">
         <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute top-1/4 -left-1/4 w-96 h-96 bg-primary/30 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.2, 0.4, 0.2],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl"
-        />
-        
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)] opacity-20" />
-      </div>
+          key={currentSlide}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+          className="absolute inset-0"
+        >
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${features[currentSlide].image})`,
+            }}
+          />
+          {/* Dark overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
+        </motion.div>
+      </AnimatePresence>
 
-      <div className="container mx-auto container-padding">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left Column - Content */}
-          <div className="text-center lg:text-left">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Badge className="mb-4 text-sm px-4 py-1">
-                <Zap className="w-3 h-3 mr-1" />
-                Enterprise Inventory Management
-              </Badge>
-            </motion.div>
-
+      {/* Content */}
+      <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -30 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-4xl"
+          >
             <motion.h1
+              className="mb-6 text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 leading-tight"
+              transition={{ delay: 0.2 }}
             >
-              Take Control of Your{' '}
-              <span className="text-gradient">
-                Inventory
-              </span>
+              {features[currentSlide].title}
             </motion.h1>
 
             <motion.p
+              className="mb-8 text-xl text-white/90 md:text-2xl"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto lg:mx-0"
+              transition={{ delay: 0.4 }}
             >
-              Streamline your warehouse operations, track stock in real-time, and make data-driven decisions with our comprehensive inventory management platform.
+              {features[currentSlide].description}
             </motion.p>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12"
+              transition={{ delay: 0.6 }}
             >
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-base group"
+                className="bg-primary px-8 py-6 text-lg font-semibold text-primary-foreground hover:bg-primary/90"
+                onClick={() => {
+                  window.location.href = '/login';
+                }}
               >
-                Get Started Free
-                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                Get Started Now
               </Button>
             </motion.div>
+          </motion.div>
+        </AnimatePresence>
 
-            {/* Trust Badges */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="flex flex-wrap gap-6 justify-center lg:justify-start text-sm text-muted-foreground"
-            >
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-green-600" />
-                <span>Bank-level Security</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-yellow-600" />
-                <span>99.9% Uptime</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-blue-600" />
-                <span>GDPR Compliant</span>
-              </div>
-            </motion.div>
-          </div>
+        {/* Carousel Navigation */}
+        <div className="absolute left-8 right-8 top-1/2 z-20 flex -translate-y-1/2 items-center justify-between">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={prevSlide}
+            className="h-12 w-12 rounded-full bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 hover:text-white"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="h-8 w-8" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={nextSlide}
+            className="h-12 w-12 rounded-full bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 hover:text-white"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="h-8 w-8" />
+          </Button>
+        </div>
 
-          {/* Right Column - Dashboard Mockup */}
-          <div className="relative">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 50 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="relative z-10"
-            >
-              {/* Main Dashboard Card */}
-              <div className="glass-effect rounded-2xl p-6 shadow-2xl border-2">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h3 className="font-semibold text-lg">Dashboard Overview</h3>
-                    <p className="text-sm text-muted-foreground">Real-time insights</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-green-500" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                    <div className="w-3 h-3 rounded-full bg-red-500" />
-                  </div>
-                </div>
-
-                {/* System Overview Grid */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  {[
-                    { title: 'Product Catalog', desc: 'Manage SKU, categories, & pricing' },
-                    { title: 'Stock Tracking', desc: 'Real-time inventory levels' },
-                    { title: 'Sales & Orders', desc: 'POS & invoice management' },
-                    { title: 'Reports & Audits', desc: 'Complete activity & financial logs' },
-                  ].map((item, index) => (
-                    <motion.div
-                      key={item.title}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 + index * 0.1 }}
-                      className="bg-background/50 rounded-lg p-4 border"
-                    >
-                      <p className="text-sm font-semibold text-foreground mb-1">{item.title}</p>
-                      <p className="text-xs text-muted-foreground">{item.desc}</p>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Workflow Indicator */}
-                <div className="bg-background/50 rounded-lg p-4 border flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">System Status</p>
-                    <p className="text-xs text-muted-foreground">Ready for deployment</p>
-                  </div>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-600">
-                    Active & Operational
-                  </span>
-                </div>
-              </div>
-
-              {/* Floating Feature Cards */}
-              {floatingFeatures.map((feature, index) => {
-                const positions = [
-                  { top: '-10%', left: '-5%' },
-                  { top: '10%', right: '-10%' },
-                  { bottom: '25%', left: '-8%' },
-                  { bottom: '5%', right: '-5%' },
-                ];
-
-                return (
-                  <motion.div
-                    key={feature.label}
-                    initial={{ opacity: 0, scale: 0 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{
-                      delay: 0.8 + index * 0.1,
-                      type: 'spring',
-                      stiffness: 200,
-                    }}
-                    whileHover={{ scale: 1.1 }}
-                    className="absolute hidden lg:flex items-center gap-2 glass-effect px-4 py-2 rounded-full shadow-lg"
-                    style={positions[index]}
-                  >
-                    <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${feature.color} flex items-center justify-center`}>
-                      <feature.icon className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-sm font-medium whitespace-nowrap">
-                      {feature.label}
-                    </span>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-
-            {/* Decorative Elements */}
-            <motion.div
-              animate={{
-                y: [0, -20, 0],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-              className="absolute -top-10 -right-10 w-72 h-72 bg-gradient-to-br from-primary/20 to-purple-600/20 rounded-full blur-3xl -z-10"
+        {/* Carousel Indicators */}
+        <div className="absolute bottom-12 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+          {features.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`h-2 transition-all ${
+                index === currentSlide ? 'w-8 bg-white' : 'w-2 bg-white/50 hover:bg-white/75'
+              } rounded-full`}
+              aria-label={`Go to slide ${index + 1}`}
             />
-          </div>
+          ))}
         </div>
       </div>
-
-      {/* Scroll Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-6 h-10 border-2 border-muted-foreground/30 rounded-full flex justify-center pt-2"
-        >
-          <motion.div
-            animate={{ y: [0, 12, 0], opacity: [1, 0, 1] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="w-1.5 h-1.5 bg-muted-foreground/50 rounded-full"
-          />
-        </motion.div>
-      </motion.div>
     </section>
   );
 }
