@@ -372,3 +372,41 @@ For support, email support@inventory.com or create an issue.
 ---
 
 **Built with ❤️ for Enterprise Scale**
+
+## 🛠️ Tech Stack
+
+### Languages
+<p align="left">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=js,ts,py,php,java,c,html,css,kotlin,dart" alt="Languages" />
+  </a>
+</p>
+
+### Frontend & Frameworks
+<p align="left">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=react,nextjs,vue,svelte,tailwind,bootstrap,jquery,vite,webpack" alt="Frontend & Frameworks" />
+  </a>
+</p>
+
+### Backend & APIs
+<p align="left">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=nodejs,express,laravel,django,fastapi,flask,graphql,spring" alt="Backend & APIs" />
+  </a>
+</p>
+
+### Mobile
+<p align="left">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=flutter,kotlin,java,androidstudio" alt="Mobile" />
+  </a>
+</p>
+
+### Databases & Tools
+<p align="left">
+  <a href="https://skillicons.dev">
+    <img src="https://skillicons.dev/icons?i=mysql,postgres,mongodb,redis,prisma,git,docker,postman" alt="Databases & Tools" />
+  </a>
+</p>
+
