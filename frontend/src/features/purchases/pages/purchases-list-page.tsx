@@ -111,7 +111,7 @@ export function PurchasesListPage() {
     },
   ]
 
-  const purchases = data?.data || []
+  const purchases = Array.isArray(data) ? data : (data?.data || [])
 
   return (
     <div className="space-y-4">

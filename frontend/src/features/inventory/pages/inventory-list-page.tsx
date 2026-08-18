@@ -83,7 +83,7 @@ export function InventoryListPage() {
     },
   ]
 
-  const inventory = data?.data || []
+  const inventory = Array.isArray(data) ? data : (data?.data || [])
   const totalValue = inventory.reduce((sum, item) => {
     return sum + (item.quantity || 0) * (item.product?.cost || 0)
   }, 0)

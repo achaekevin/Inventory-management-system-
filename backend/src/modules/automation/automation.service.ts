@@ -149,16 +149,16 @@ export class AutomationService {
     try {
       switch (rule.type as AutomationRuleType) {
         case 'low_stock_po':
-          result = await this.runLowStockPO(rule.config as LowStockPoConfig);
+          result = await this.runLowStockPO(rule.config as unknown as LowStockPoConfig);
           break;
         case 'high_value_notify':
-          result = await this.runHighValueNotify(rule.config as HighValueNotifyConfig);
+          result = await this.runHighValueNotify(rule.config as unknown as HighValueNotifyConfig);
           break;
         case 'overdue_payment_reminder':
-          result = await this.runOverduePaymentReminder(rule.config as OverduePaymentReminderConfig);
+          result = await this.runOverduePaymentReminder(rule.config as unknown as OverduePaymentReminderConfig);
           break;
         case 'archive_inactive_product':
-          result = await this.runArchiveInactiveProduct(rule.config as ArchiveInactiveProductConfig);
+          result = await this.runArchiveInactiveProduct(rule.config as unknown as ArchiveInactiveProductConfig);
           break;
         default:
           result = { itemsAffected: 0, details: [] };

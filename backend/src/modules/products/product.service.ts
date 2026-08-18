@@ -157,7 +157,16 @@ export class ProductService {
   async createProduct(data: CreateProductDto, userId: string) {
     // Fail-safe Category lookup or auto-creation
     let category = data.categoryId
-      ? await prisma.category.findUnique({ where: { id: data.categoryId } })
+      ? await prisma.category.findFirst({
+          where: {
+            OR: [
+              { id: data.categoryId },
+              { name: data.categoryId },
+              { slug: slugify(data.categoryId) },
+            ],
+            deletedAt: null,
+          },
+        }).catch(() => null)
       : null;
 
     if (!category) {
@@ -176,11 +185,20 @@ export class ProductService {
 
     // Fail-safe Unit lookup or auto-creation
     let unit = data.unitId
-      ? await prisma.unit.findUnique({ where: { id: data.unitId } })
+      ? await prisma.unit.findFirst({
+          where: {
+            OR: [
+              { id: data.unitId },
+              { name: data.unitId },
+              { shortName: data.unitId },
+            ],
+            deletedAt: null,
+          },
+        }).catch(() => null)
       : null;
 
     if (!unit) {
-      unit = await prisma.unit.findFirst();
+      unit = await prisma.unit.findFirst({ where: { deletedAt: null } });
     }
 
     if (!unit) {
@@ -205,13 +223,18 @@ export class ProductService {
 
     // Validate brand if provided
     if (data.brandId) {
-      const brand = await prisma.brand.findUnique({
-        where: { id: data.brandId },
-      });
+      const brand = await prisma.brand.findFirst({
+        where: {
+          OR: [
+            { id: data.brandId },
+            { name: data.brandId },
+            { slug: slugify(data.brandId) },
+          ],
+          deletedAt: null,
+        },
+      }).catch(() => null);
 
-      if (!brand) {
-        data.brandId = undefined;
-      }
+      data.brandId = brand ? brand.id : undefined;
     }
 
     // Check if barcode exists
@@ -257,8 +280,10 @@ export class ProductService {
       },
     });
 
-    // Create audit log
-    await this.createAuditLog(userId, 'create', product.id, null, product);
+    // Create audit log safely
+    this.createAuditLog(userId, 'create', product.id, null, product).catch((err) => {
+      logger.warn(`Audit log creation failed for product ${product.id}: ${err.message}`);
+    });
 
     logger.info(`Product created: ${product.name} (${product.sku})`);
 

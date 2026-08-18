@@ -64,7 +64,7 @@ export class SecurityController {
     try {
       const userId = req.user!.id;
       const { id } = req.params;
-      const result = await securityService.revokeSession(userId, id);
+      const result = await securityService.revokeSession(userId, id as string);
       ResponseHandler.success(res, result, 'Session revoked');
     } catch (error) {
       next(error);
@@ -141,7 +141,7 @@ export class SecurityController {
     try {
       const userId = req.user!.id;
       const { id } = req.params;
-      const result = await securityService.revokeApiToken(userId, id);
+      const result = await securityService.revokeApiToken(userId, id as string);
       ResponseHandler.success(res, result, 'API token revoked');
     } catch (error) {
       next(error);

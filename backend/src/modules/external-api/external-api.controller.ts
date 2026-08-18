@@ -5,7 +5,7 @@ import { ExternalApiRequest } from '../../common/middleware/external-api.middlew
 
 export class ExternalApiController {
   // Mobile Apps
-  async getMobileSync(req: ExternalApiRequest, res: Response, next: NextFunction): Promise<void> {
+  async getMobileSync(_req: ExternalApiRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const payload = await externalApiService.getMobileSyncPayload();
       ResponseHandler.success(res, payload, 'Mobile sync payload retrieved');
@@ -28,7 +28,7 @@ export class ExternalApiController {
   async scanBarcode(req: ExternalApiRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { barcode } = req.params;
-      const product = await externalApiService.scanBarcode(barcode);
+      const product = await externalApiService.scanBarcode(barcode as string);
       ResponseHandler.success(res, product, 'Product scanned successfully');
     } catch (error) {
       next(error);

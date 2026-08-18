@@ -83,7 +83,7 @@ export function CustomersListPage() {
     },
   ]
 
-  const customers = data?.data || []
+  const customers = Array.isArray(data) ? data : (data?.data || [])
 
   return (
     <div className="space-y-4">

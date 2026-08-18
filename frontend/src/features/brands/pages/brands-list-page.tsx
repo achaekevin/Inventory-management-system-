@@ -132,7 +132,7 @@ export function BrandsListPage() {
     },
   ]
 
-  const brands = data?.data || []
+  const brands = Array.isArray(data) ? data : (data?.data || [])
 
   return (
     <div className="space-y-4">

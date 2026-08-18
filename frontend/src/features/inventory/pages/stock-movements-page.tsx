@@ -102,7 +102,7 @@ export function StockMovementsPage() {
     },
   ]
 
-  const movements = data?.data || []
+  const movements = Array.isArray(data) ? data : (data?.data || [])
 
   return (
     <div className="space-y-4">

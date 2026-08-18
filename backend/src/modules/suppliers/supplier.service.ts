@@ -1,5 +1,5 @@
 import prisma from '../../config/database';
-import { NotFoundError, BadRequestError } from '../../common/errors/AppError';
+import { NotFoundError, BadRequestError, ConflictError } from '../../common/errors/AppError';
 import { getPaginationParams, PaginationParams } from '../../common/utilities/pagination';
 import logger from '../../config/logger';
 
@@ -157,11 +157,22 @@ export class SupplierService {
   async createSupplier(data: CreateSupplierDto, userId: string) {
     const { code, website, ...createData } = data;
 
+    if (createData.email) {
+      const existing = await prisma.supplier.findFirst({
+        where: { email: createData.email, deletedAt: null },
+      });
+      if (existing) {
+        throw new ConflictError('Supplier with this email already exists');
+      }
+    }
+
     const supplier = await prisma.supplier.create({
       data: createData,
     });
 
-    await this.createAuditLog(userId, 'create', supplier.id, 'Supplier', null, supplier);
+    this.createAuditLog(userId, 'create', supplier.id, 'Supplier', null, supplier).catch((err) => {
+      logger.warn(`Audit log creation failed for supplier ${supplier.id}: ${err.message}`);
+    });
 
     logger.info(`Supplier created: ${supplier.name}`);
 

@@ -42,7 +42,7 @@ import { BatchesListPage } from '@/features/batches/pages/batches-list-page'
 
 // Protected Route wrapper
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const token = localStorage.getItem('accessToken')
+  const token = localStorage.getItem('auth_token') || localStorage.getItem('accessToken')
   if (!token || token === 'undefined' || token === 'null') {
     return <Navigate to="/login" replace />
   }

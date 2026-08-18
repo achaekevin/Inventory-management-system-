@@ -38,22 +38,57 @@ export function SupplierFormPage() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<SupplierFormData>({
     resolver: zodResolver(supplierSchema),
-    defaultValues: supplier || {
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      address: '',
+      city: '',
+      country: '',
+      taxId: '',
+      creditLimit: 0,
+      paymentTerms: '',
       isActive: true,
     },
   })
+
+  useEffect(() => {
+    if (supplier) {
+      reset({
+        name: supplier.name || '',
+        email: supplier.email || '',
+        phone: supplier.phone || '',
+        address: supplier.address || '',
+        city: supplier.city || '',
+        country: supplier.country || '',
+        taxId: supplier.taxId || '',
+        creditLimit: Number(supplier.creditLimit) || 0,
+        paymentTerms: supplier.paymentTerms || '',
+        isActive: supplier.isActive ?? true,
+      })
+    }
+  }, [supplier, reset])
 
   const onSubmit = (data: SupplierFormData) => {
     if (isEdit && id) {
       updateSupplier(
         { id, ...data },
-        { onSuccess: () => navigate('/suppliers') }
+        {
+          onSuccess: () => {
+            navigate('/suppliers')
+          },
+        }
       )
     } else {
-      createSupplier(data, { onSuccess: () => navigate('/suppliers') })
+      createSupplier(data, {
+        onSuccess: () => {
+          navigate('/suppliers')
+        },
+      })
     }
   }
 

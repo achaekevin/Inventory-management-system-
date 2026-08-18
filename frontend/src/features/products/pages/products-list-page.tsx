@@ -96,7 +96,7 @@ export function ProductsListPage() {
     )
   }
 
-  const products = data?.data || []
+  const products = Array.isArray(data) ? data : (data?.data || [])
 
   return (
     <div className="space-y-4">

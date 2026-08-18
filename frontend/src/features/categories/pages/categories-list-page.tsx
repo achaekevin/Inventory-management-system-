@@ -132,7 +132,7 @@ export function CategoriesListPage() {
     },
   ]
 
-  const categories = data?.data || []
+  const categories = Array.isArray(data) ? data : (data?.data || [])
 
   return (
     <div className="space-y-4">

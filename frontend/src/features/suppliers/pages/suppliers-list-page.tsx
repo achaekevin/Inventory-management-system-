@@ -78,7 +78,7 @@ export function SuppliersListPage() {
     },
   ]
 
-  const suppliers = data?.data || []
+  const suppliers = Array.isArray(data) ? data : (data?.data || [])
 
   return (
     <div className="space-y-4">

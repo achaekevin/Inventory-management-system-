@@ -486,7 +486,7 @@ export function WarehousesListPage() {
   const { data, isLoading } = useWarehouses({ search: search || undefined })
   const { mutate: deleteWarehouse } = useDeleteWarehouse()
 
-  const warehouses = data?.data || []
+  const warehouses = Array.isArray(data) ? data : (data?.data || [])
 
   const totalActive = warehouses.filter((w) => w.isActive).length
   const totalInventory = warehouses.reduce((s, w) => s + (w._count?.inventory || 0), 0)

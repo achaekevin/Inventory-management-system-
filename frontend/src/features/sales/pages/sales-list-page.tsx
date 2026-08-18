@@ -99,7 +99,7 @@ export function SalesListPage() {
     },
   ]
 
-  const sales = data?.data || []
+  const sales = Array.isArray(data) ? data : (data?.data || [])
 
   return (
     <div className="space-y-4">

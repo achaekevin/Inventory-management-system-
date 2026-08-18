@@ -2,14 +2,14 @@ import { Response, NextFunction } from 'express';
 import automationService from './automation.service';
 import { ResponseHandler } from '../../common/utilities/response';
 import { AuthRequest } from '../../common/middleware/authenticate';
-import { BadRequestError, NotFoundError } from '../../common/errors/AppError';
+import { BadRequestError } from '../../common/errors/AppError';
 
 const VALID_TYPES = ['low_stock_po', 'high_value_notify', 'overdue_payment_reminder', 'archive_inactive_product'];
 
 export class AutomationController {
 
   /** GET /api/automation/rules */
-  async listRules(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+  async listRules(_req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const rules = await automationService.listRules();
       ResponseHandler.success(res, rules);
@@ -46,7 +46,7 @@ export class AutomationController {
   async updateRule(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const { name, description, config, isEnabled, intervalHours } = req.body;
-      const rule = await automationService.updateRule(req.params.id, {
+      const rule = await automationService.updateRule(req.params.id as string, {
         name,
         description,
         config,
@@ -60,7 +60,7 @@ export class AutomationController {
   /** DELETE /api/automation/rules/:id */
   async deleteRule(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      await automationService.deleteRule(req.params.id);
+      await automationService.deleteRule(req.params.id as string);
       ResponseHandler.success(res, null, 'Automation rule deleted');
     } catch (err) { next(err); }
   }
@@ -68,7 +68,7 @@ export class AutomationController {
   /** POST /api/automation/rules/:id/run */
   async runRule(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { result, log } = await automationService.runRule(req.params.id);
+      const { result, log } = await automationService.runRule(req.params.id as string);
       ResponseHandler.success(res, { result, log }, `Rule executed: ${result.itemsAffected} item(s) affected`);
     } catch (err) { next(err); }
   }
@@ -77,7 +77,7 @@ export class AutomationController {
   async getRuleLogs(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const limit = parseInt(req.query.limit as string) || 50;
-      const logs = await automationService.getRuleLogs(req.params.id, limit);
+      const logs = await automationService.getRuleLogs(req.params.id as string, limit);
       ResponseHandler.success(res, logs);
     } catch (err) { next(err); }
   }
