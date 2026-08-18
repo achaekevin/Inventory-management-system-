@@ -5,8 +5,7 @@ import { Separator } from '@/components/ui/separator';
 const quickLinks = [
   { name: 'Home', href: '#' },
   { name: 'Features', href: '#features' },
-  { name: 'About Us', href: '#about' },
-  { name: 'Location', href: '#location' },
+  { name: 'How It Works', href: '#how-it-works' },
 ];
 
 export function Footer() {
@@ -93,20 +92,20 @@ export function Footer() {
             </motion.div>
           </div>
 
-          {/* Quick Links Section */}
+            {/* Quick Links Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
           >
-            <h3 className="font-semibold text-lg mb-4 text-white">Quick Links</h3>
+            <h3 className="font-bold text-xl mb-5 text-white">Quick Links</h3>
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.name}>
                   <button
                     onClick={() => scrollToSection(link.href)}
-                    className="text-white/80 hover:text-white transition-colors text-sm"
+                    className="text-white/90 hover:text-white transition-colors text-base font-medium"
                   >
                     {link.name}
                   </button>
@@ -122,25 +121,25 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
           >
-            <h3 className="font-semibold text-lg mb-4 text-white">Contact Us</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3 text-white/80 text-sm">
-                <MapPin className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            <h3 className="font-bold text-xl mb-5 text-white">Contact Us</h3>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3 text-white/90 text-base">
+                <MapPin className="w-6 h-6 flex-shrink-0 mt-0.5" />
                 <span>123 Business Street, Tech Valley, Innovation City</span>
               </li>
-              <li className="flex items-center gap-3 text-white/80 text-sm">
-                <Phone className="w-5 h-5 flex-shrink-0" />
+              <li className="flex items-center gap-3 text-white/90 text-base font-medium">
+                <Phone className="w-6 h-6 flex-shrink-0" />
                 <span>+254 712 345678</span>
               </li>
-              <li className="flex items-center gap-3 text-white/80 text-sm">
-                <Mail className="w-5 h-5 flex-shrink-0" />
+              <li className="flex items-center gap-3 text-white/90 text-base font-medium">
+                <Mail className="w-6 h-6 flex-shrink-0" />
                 <span>info@inventorypro.com</span>
               </li>
             </ul>
           </motion.div>
         </div>
 
-        <Separator className="my-8 bg-white/20" />
+        <Separator className="my-10 bg-white/20" />
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -148,7 +147,7 @@ export function Footer() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="text-sm text-white/70 text-center md:text-left"
+            className="text-base text-white/80 text-center md:text-left"
           >
             © 2026 InventoryPro. All rights reserved.
           </motion.p>
@@ -157,7 +156,7 @@ export function Footer() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="flex items-center gap-6 text-sm text-white/70"
+            className="flex items-center gap-8 text-base text-white/80 font-medium"
           >
             <button
               onClick={() => scrollToSection('#privacy')}

@@ -1,7 +1,7 @@
 import { Navigation } from '@/components/landing/Navigation';
 import { Hero } from '@/components/landing/Hero';
+import { HowItWorks } from '@/components/landing/HowItWorks';
 import { FeaturesSection } from '@/components/landing/FeaturesSection';
-import { CTA } from '@/components/landing/CTA';
 import { Footer } from '@/components/landing/Footer';
 
 export function LandingPage() {
@@ -10,8 +10,8 @@ export function LandingPage() {
       <Navigation />
       <main>
         <Hero />
+        <HowItWorks />
         <FeaturesSection />
-        <CTA />
       </main>
       <Footer />
     </div>

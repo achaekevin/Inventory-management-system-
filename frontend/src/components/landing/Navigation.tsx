@@ -6,6 +6,7 @@ import { useState } from 'react';
 const navItems = [
   { name: 'Home', href: '/#' },
   { name: 'Features', href: '/#features' },
+  { name: 'How It Works', href: '/#how-it-works' },
 ];
 
 export function Navigation() {
@@ -25,28 +26,28 @@ export function Navigation() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-primary shadow-md">
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-10">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-md shadow-lg border-b border-white/10">
+      <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
         {/* Logo */}
         <motion.button
           onClick={() => navigate('/#')}
-          className="flex items-center gap-2 text-xl font-bold text-white"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          className="flex items-center gap-3 text-2xl font-black tracking-tight text-white"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-white text-primary">
-            <Package className="h-5 w-5" />
+          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-primary shadow-md">
+            <Package className="h-6 w-6" />
           </span>
           InventoryPro
         </motion.button>
 
         {/* Center menu (desktop) */}
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-10 md:flex">
           {navItems.map((item) => (
             <button
               key={item.name}
               onClick={() => navigate(item.href)}
-              className="text-sm font-medium text-white/90 transition-colors hover:text-white"
+              className="text-base font-semibold text-white/90 transition-colors hover:text-white"
             >
               {item.name}
             </button>
@@ -54,16 +55,16 @@ export function Navigation() {
         </div>
 
         {/* Right actions */}
-        <div className="flex items-center gap-2 md:gap-3">
+        <div className="flex items-center gap-3 md:gap-4">
           <Button
             variant="ghost"
-            className="hidden text-white hover:bg-white/10 hover:text-white md:inline-flex"
+            className="hidden text-base font-semibold text-white hover:bg-white/15 hover:text-white px-5 py-2.5 md:inline-flex"
             onClick={() => (window.location.href = '/login')}
           >
             Log in
           </Button>
           <Button
-            className="hidden rounded-md border border-white bg-white text-primary hover:bg-white/90 md:inline-flex"
+            className="hidden rounded-lg border-2 border-white bg-white text-base font-bold text-primary hover:bg-white/90 px-6 py-2.5 shadow-md md:inline-flex"
             onClick={() => (window.location.href = '/login')}
           >
             Sign up

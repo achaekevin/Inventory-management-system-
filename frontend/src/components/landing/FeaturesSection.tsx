@@ -75,21 +75,21 @@ const itemVariants = {
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="relative py-20 md:py-32 bg-background">
-      <div className="container mx-auto px-6 lg:px-10">
+    <section id="features" className="relative py-24 md:py-36 bg-background">
+      <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground mb-5">
             Explore Our Features
           </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Everything you need to manage your inventory efficiently and grow your business
+          <p className="text-xl sm:text-2xl text-muted-foreground font-medium max-w-3xl mx-auto leading-relaxed">
+            Everything you need to manage your inventory efficiently, optimize warehouses, and accelerate business growth.
           </p>
         </motion.div>
 
@@ -99,34 +99,36 @@ export function FeaturesSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
         >
           {features.map((feature) => (
             <motion.div
               key={feature.title}
               variants={itemVariants}
               whileHover={{ y: -8, transition: { duration: 0.2 } }}
-              className="group relative overflow-hidden rounded-2xl bg-card border border-border p-6 shadow-sm hover:shadow-xl transition-all duration-300"
+              className="group relative overflow-hidden rounded-2xl bg-card border border-border/80 p-8 shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col justify-between"
             >
-              {/* Icon */}
-              <div className="mb-4">
-                <div
-                  className={`inline-flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${feature.color} shadow-lg`}
-                >
-                  <feature.icon className="h-7 w-7 text-white" />
+              <div>
+                {/* Icon */}
+                <div className="mb-6">
+                  <div
+                    className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.color} shadow-lg shadow-primary/10`}
+                  >
+                    <feature.icon className="h-8 w-8 text-white" />
+                  </div>
                 </div>
+
+                {/* Content */}
+                <h3 className="mb-3 text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
 
-              {/* Content */}
-              <h3 className="mb-2 text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
-                {feature.title}
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {feature.description}
-              </p>
-
               {/* Hover Effect */}
-              <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </motion.div>
           ))}
         </motion.div>
