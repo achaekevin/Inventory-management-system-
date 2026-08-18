@@ -7,12 +7,10 @@ export const formatCurrency = (
   locale: string = 'en-KE'
 ): string => {
   const val = Number(amount) || 0
-  const formatted = new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency,
+  return `KSh ${val.toLocaleString(locale, {
     minimumFractionDigits: 2,
-  }).format(val)
-  return formatted.replace('KES', 'KSh')
+    maximumFractionDigits: 2,
+  })}`
 }
 
 // Number formatting

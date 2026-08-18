@@ -105,11 +105,11 @@ export function SettingsPage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="currency">Default Currency</Label>
-                  <Input id="currency" placeholder="USD" />
+                  <Input id="currency" defaultValue="KES" placeholder="KES" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="currencySymbol">Currency Symbol</Label>
-                  <Input id="currencySymbol" placeholder="$" />
+                  <Input id="currencySymbol" defaultValue="KSh" placeholder="KSh" />
                 </div>
                 <Separator />
                 <div className="space-y-2">

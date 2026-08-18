@@ -21,9 +21,9 @@ export interface LocalizationConfig {
 
 const DEFAULT_CONFIG: LocalizationConfig = {
   language: 'en',
-  currency: 'USD',
-  currencySymbol: '$',
-  timezone: 'UTC',
+  currency: 'KES',
+  currencySymbol: 'KSh',
+  timezone: 'Africa/Nairobi',
   dateFormat: 'MMM dd, yyyy',
   taxMode: 'exclusive',
   taxRate: 16,

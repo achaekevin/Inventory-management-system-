@@ -35,10 +35,10 @@ interface LocalizationContextType {
 }
 
 const CURRENCY_SYMBOLS: Record<string, string> = {
+  KES: 'KSh',
   USD: '$',
   EUR: '€',
   GBP: '£',
-  KES: 'KSh',
   JPY: '¥',
   CAD: 'C$',
   AUD: 'A$',
@@ -53,13 +53,13 @@ export const LocalizationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     return (localStorage.getItem('sys_language') as SupportedLanguage) || 'en'
   })
   const [currency, setCurrencyState] = useState<string>(() => {
-    return localStorage.getItem('sys_currency') || 'USD'
+    return localStorage.getItem('sys_currency') || 'KES'
   })
   const [currencySymbol, setCurrencySymbol] = useState<string>(() => {
-    return CURRENCY_SYMBOLS[currency] || '$'
+    return CURRENCY_SYMBOLS[currency] || 'KSh'
   })
   const [timezone, setTimezoneState] = useState<string>(() => {
-    return localStorage.getItem('sys_timezone') || 'UTC'
+    return localStorage.getItem('sys_timezone') || 'Africa/Nairobi'
   })
   const [dateFormat, setDateFormatState] = useState<string>(() => {
     return localStorage.getItem('sys_date_format') || 'MMM dd, yyyy'

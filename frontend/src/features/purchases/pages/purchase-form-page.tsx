@@ -283,7 +283,7 @@ export function PurchaseFormPage() {
                   </div>
 
                   <div className="w-full md:w-36 space-y-1">
-                    <Label className="text-xs">Unit Cost ($) *</Label>
+                    <Label className="text-xs">Unit Cost (KSh) *</Label>
                     <Input
                       type="number"
                       step="0.01"
@@ -318,7 +318,7 @@ export function PurchaseFormPage() {
             <div className="border-t pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <Label htmlFor="discount">Discount ($)</Label>
+                  <Label htmlFor="discount">Discount (KSh)</Label>
                   <Input
                     id="discount"
                     type="number"
@@ -330,7 +330,7 @@ export function PurchaseFormPage() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="shipping">Shipping / Freight ($)</Label>
+                  <Label htmlFor="shipping">Shipping / Freight (KSh)</Label>
                   <Input
                     id="shipping"
                     type="number"

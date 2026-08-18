@@ -7,12 +7,10 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatCurrency(amount: number, currency: string = "KES"): string {
   const val = Number(amount) || 0
-  const formatted = new Intl.NumberFormat("en-KE", {
-    style: "currency",
-    currency,
+  return `KSh ${val.toLocaleString("en-KE", {
     minimumFractionDigits: 2,
-  }).format(val)
-  return formatted.replace("KES", "KSh")
+    maximumFractionDigits: 2,
+  })}`
 }
 
 export function formatDate(date: Date | string, format: string = "PPP"): string {
