@@ -157,7 +157,9 @@ export class WarehouseService {
       },
     });
 
-    await this.createAuditLog(userId, 'create', warehouse.id, 'Warehouse', null, warehouse);
+    this.createAuditLog(userId, 'create', warehouse.id, 'Warehouse', null, warehouse).catch((err) => {
+      logger.warn(`Audit log failed for warehouse ${warehouse.id}: ${err.message}`);
+    });
 
     logger.info(`Warehouse created: ${warehouse.name} (${warehouse.code})`);
 

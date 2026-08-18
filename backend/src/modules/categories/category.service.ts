@@ -179,8 +179,10 @@ export class CategoryService {
       },
     });
 
-    // Create audit log
-    await this.createAuditLog(userId, 'create', category.id, null, category);
+    // Create audit log safely
+    this.createAuditLog(userId, 'create', category.id, null, category).catch((err) => {
+      logger.warn(`Audit log failed for category ${category.id}: ${err.message}`);
+    });
 
     logger.info(`Category created: ${category.name}`);
 

@@ -3,10 +3,13 @@ import { z } from 'zod';
 // Customer validators
 export const createCustomerSchema = z.object({
   body: z.object({
-    name: z.string().min(2, 'Name must be at least 2 characters'),
-    code: z.string().min(2).max(50).optional(),
+    name: z.string().min(1, 'Name is required'),
+    firstName: z.string().optional().nullable(),
+    lastName: z.string().optional().nullable(),
+    companyName: z.string().optional().nullable(),
+    code: z.string().optional().nullable(),
     email: z.string().email('Invalid email address').optional().nullable().or(z.literal('')),
-    phone: z.string().optional().nullable(),
+    phone: z.string().optional().nullable().or(z.literal('')),
     taxId: z.string().optional().nullable(),
     address: z.string().optional().nullable(),
     city: z.string().optional().nullable(),
@@ -17,6 +20,7 @@ export const createCustomerSchema = z.object({
     creditLimit: z.number().min(0).optional().nullable(),
     paymentTerms: z.string().optional().nullable(),
     notes: z.string().optional().nullable(),
+    isActive: z.boolean().optional(),
   }),
 });
 

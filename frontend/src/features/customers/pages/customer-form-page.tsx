@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -10,11 +11,12 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useCustomer, useCreateCustomer, useUpdateCustomer } from '../hooks/use-customers'
 import { DocumentPanel } from '@/features/documents/components/document-panel'
+import { toast } from 'sonner'
 
 const customerSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Valid email is required'),
-  phone: z.string().min(1, 'Phone is required'),
+  email: z.string().email('Valid email is required').optional().or(z.literal('')),
+  phone: z.string().optional().or(z.literal('')),
   address: z.string().optional(),
   city: z.string().optional(),
   country: z.string().optional(),
@@ -37,23 +39,64 @@ export function CustomerFormPage() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<CustomerFormData>({
     resolver: zodResolver(customerSchema),
-    defaultValues: customer || {
-      isActive: true,
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      address: '',
+      city: '',
+      country: '',
+      creditLimit: 0,
       loyaltyPoints: 0,
+      isActive: true,
     },
   })
+
+  useEffect(() => {
+    if (customer) {
+      const displayName = customer.name || [customer.firstName, customer.lastName].filter(Boolean).join(' ') || ''
+      reset({
+        name: displayName,
+        email: customer.email || '',
+        phone: customer.phone || '',
+        address: customer.addresses?.[0]?.addressLine1 || customer.address || '',
+        city: customer.addresses?.[0]?.city || customer.city || '',
+        country: customer.addresses?.[0]?.country || customer.country || '',
+        creditLimit: Number(customer.creditLimit) || 0,
+        loyaltyPoints: Number(customer.loyaltyPoints) || 0,
+        isActive: customer.isActive ?? true,
+      })
+    }
+  }, [customer, reset])
 
   const onSubmit = (data: CustomerFormData) => {
     if (isEdit && id) {
       updateCustomer(
         { id, ...data },
-        { onSuccess: () => navigate('/customers') }
+        {
+          onSuccess: () => {
+            toast.success('Customer updated successfully!')
+            navigate('/customers')
+          },
+          onError: (err: any) => {
+            toast.error(err.message || 'Failed to update customer')
+          },
+        }
       )
     } else {
-      createCustomer(data, { onSuccess: () => navigate('/customers') })
+      createCustomer(data, {
+        onSuccess: () => {
+          toast.success('Customer added successfully!')
+          navigate('/customers')
+        },
+        onError: (err: any) => {
+          toast.error(err.message || 'Failed to create customer')
+        },
+      })
     }
   }
 

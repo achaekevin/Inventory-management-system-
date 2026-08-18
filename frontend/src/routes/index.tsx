@@ -18,7 +18,7 @@ import { BrandsListPage } from '@/features/brands/pages'
 import { SuppliersListPage, SupplierFormPage } from '@/features/suppliers/pages'
 import { CustomersListPage, CustomerFormPage } from '@/features/customers/pages'
 import { InventoryListPage, StockMovementsPage } from '@/features/inventory/pages'
-import { PurchasesListPage } from '@/features/purchases/pages'
+import { PurchasesListPage, PurchaseFormPage } from '@/features/purchases/pages'
 import { SalesListPage, POSPage } from '@/features/sales/pages'
 import { ReportsPage } from '@/features/reports/pages'
 import { UsersListPage } from '@/features/users/pages'
@@ -191,6 +191,14 @@ export const router = createBrowserRouter([
       {
         path: 'purchases',
         element: <PurchasesListPage />,
+      },
+      {
+        path: 'purchases/new',
+        element: <PurchaseFormPage />,
+      },
+      {
+        path: 'purchases/:id',
+        element: <PurchaseFormPage />,
       },
       // Sales
       {

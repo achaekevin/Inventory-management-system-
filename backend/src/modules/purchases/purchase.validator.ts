@@ -1,22 +1,23 @@
 import { z } from 'zod';
 
 const purchaseItemSchema = z.object({
-  productId: z.string().uuid('Invalid product ID'),
+  productId: z.string().min(1, 'Product is required'),
   quantity: z.number().int().min(1, 'Quantity must be at least 1'),
-  unitPrice: z.number().min(0, 'Unit price must be positive'),
+  unitPrice: z.number().min(0, 'Unit price must be positive').optional(),
+  cost: z.number().min(0, 'Cost must be positive').optional(),
   discount: z.number().min(0).optional(),
   tax: z.number().min(0).optional(),
 });
 
 export const createPurchaseSchema = z.object({
   body: z.object({
-    supplierId: z.string().uuid('Invalid supplier ID'),
-    orderDate: z.string().transform((val) => new Date(val)),
-    expectedDate: z.string().transform((val) => new Date(val)).optional(),
+    supplierId: z.string().min(1, 'Supplier is required'),
+    orderDate: z.union([z.string(), z.date()]).optional().transform((val) => val ? new Date(val) : new Date()),
+    expectedDate: z.union([z.string(), z.date()]).optional().nullable().transform((val) => val ? new Date(val) : undefined),
     items: z.array(purchaseItemSchema).min(1, 'At least one item is required'),
     discount: z.number().min(0).optional(),
     shipping: z.number().min(0).optional(),
-    notes: z.string().optional(),
+    notes: z.string().optional().nullable(),
   }),
 });
 

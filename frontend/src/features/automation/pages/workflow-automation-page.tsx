@@ -562,8 +562,11 @@ export function WorkflowAutomationPage() {
   const [editTarget, setEditTarget] = useState<AutomationRule | null>(null)
   const [logTab, setLogTab] = useState<'rules' | 'logs'>('rules')
 
-  const { data: rules = [], isLoading: rulesLoading } = useAutomationRules()
-  const { data: allLogs = [], isLoading: logsLoading } = useAllAutomationLogs()
+  const { data: rawRules, isLoading: rulesLoading } = useAutomationRules()
+  const { data: rawLogs, isLoading: logsLoading } = useAllAutomationLogs()
+
+  const rules: AutomationRule[] = Array.isArray(rawRules) ? rawRules : ((rawRules as any)?.data || [])
+  const allLogs: AutomationLog[] = Array.isArray(rawLogs) ? rawLogs : ((rawLogs as any)?.data || [])
 
   const activeCount = rules.filter(r => r.isEnabled).length
   const todayLogs = allLogs.filter(l => {

@@ -72,7 +72,7 @@ export function PaymentsListPage() {
         paymentService.getPaymentSummary(),
       ])
 
-      setPayments(listRes.data)
+      setPayments(Array.isArray(listRes.data) ? listRes.data : ((listRes.data as any)?.data || []))
       setSummary(summaryRes)
     } catch (err) {
       console.error('Failed to load payment data:', err)

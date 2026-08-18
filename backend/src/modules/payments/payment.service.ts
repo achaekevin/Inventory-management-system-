@@ -207,8 +207,10 @@ export class PaymentService {
       return newPayment;
     });
 
-    // Create audit log
-    await this.createAuditLog(userId, 'create', payment.id, null, payment);
+    // Create audit log safely
+    this.createAuditLog(userId, 'create', payment.id, null, payment).catch((err) => {
+      logger.warn(`Audit log failed for payment ${payment.id}: ${err.message}`);
+    });
 
     logger.info(`Payment created: ${payment.id} - ${payment.method}`);
 

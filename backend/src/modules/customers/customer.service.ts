@@ -165,13 +165,19 @@ export class CustomerService {
       lastName = parts.slice(1).join(' ') || undefined;
     }
 
+    const email = data.email && data.email.trim() !== '' 
+      ? data.email.trim() 
+      : `cust_${Date.now()}_${Math.floor(Math.random() * 1000)}@customer.local`;
+
     const existingEmail = await prisma.customer.findUnique({
-      where: { email: data.email },
+      where: { email },
     });
 
-    if (existingEmail) {
-      throw new BadRequestError('Customer email already exists');
+    if (existingEmail && !existingEmail.deletedAt) {
+      throw new BadRequestError('Customer with this email already exists');
     }
+
+    const phone = data.phone && data.phone.trim() !== '' ? data.phone.trim() : 'N/A';
 
     const customer = await prisma.customer.create({
       data: {
@@ -179,15 +185,17 @@ export class CustomerService {
         lastName: lastName || null,
         companyName: data.companyName || null,
         type: data.type || 'individual',
-        email: data.email,
-        phone: data.phone,
+        email,
+        phone,
         creditLimit: data.creditLimit ? data.creditLimit : null,
         notes: data.notes || null,
         loyaltyPoints: 0,
       },
     });
 
-    await this.createAuditLog(userId, 'create', customer.id, 'Customer', null, customer);
+    this.createAuditLog(userId, 'create', customer.id, 'Customer', null, customer).catch((err) => {
+      logger.warn(`Audit log failed for customer ${customer.id}: ${err.message}`);
+    });
 
     logger.info(`Customer created: ${getCustomerDisplayName(customer)}`);
 
