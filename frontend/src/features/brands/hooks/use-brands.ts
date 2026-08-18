@@ -24,7 +24,7 @@ export function useCreateBrand() {
   return useMutation({
     mutationFn: (data: CreateBrandData) => brandService.createBrand(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.brands.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.brands.all })
       toast.success('Brand created successfully!')
     },
     onError: (error: any) => {
@@ -40,7 +40,7 @@ export function useUpdateBrand() {
     mutationFn: ({ id, ...data }: UpdateBrandData) =>
       brandService.updateBrand(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.brands.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.brands.all })
       queryClient.invalidateQueries({ queryKey: queryKeys.brands.detail(variables.id) })
       toast.success('Brand updated successfully!')
     },
@@ -56,7 +56,7 @@ export function useDeleteBrand() {
   return useMutation({
     mutationFn: (id: string) => brandService.deleteBrand(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.brands.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.brands.all })
       toast.success('Brand deleted successfully!')
     },
     onError: (error: any) => {

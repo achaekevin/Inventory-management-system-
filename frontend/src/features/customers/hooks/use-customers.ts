@@ -24,7 +24,7 @@ export function useCreateCustomer() {
   return useMutation({
     mutationFn: (data: CreateCustomerData) => customerService.createCustomer(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.customers.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.customers.all })
       toast.success('Customer created successfully!')
     },
     onError: (error: any) => {
@@ -40,7 +40,7 @@ export function useUpdateCustomer() {
     mutationFn: ({ id, ...data }: UpdateCustomerData) =>
       customerService.updateCustomer(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.customers.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.customers.all })
       queryClient.invalidateQueries({ queryKey: queryKeys.customers.detail(variables.id) })
       toast.success('Customer updated successfully!')
     },
@@ -56,7 +56,7 @@ export function useDeleteCustomer() {
   return useMutation({
     mutationFn: (id: string) => customerService.deleteCustomer(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.customers.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.customers.all })
       toast.success('Customer deleted successfully!')
     },
     onError: (error: any) => {

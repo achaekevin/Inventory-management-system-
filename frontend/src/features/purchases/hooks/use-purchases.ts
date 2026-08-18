@@ -24,7 +24,7 @@ export function useCreatePurchase() {
   return useMutation({
     mutationFn: (data: CreatePurchaseData) => purchaseService.createPurchase(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.purchases.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.purchases.all })
       toast.success('Purchase order created successfully!')
     },
     onError: (error: any) => {
@@ -40,7 +40,7 @@ export function useUpdatePurchase() {
     mutationFn: ({ id, ...data }: UpdatePurchaseData) =>
       purchaseService.updatePurchase(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.purchases.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.purchases.all })
       queryClient.invalidateQueries({ queryKey: queryKeys.purchases.detail(variables.id) })
       toast.success('Purchase order updated successfully!')
     },
@@ -56,7 +56,7 @@ export function useDeletePurchase() {
   return useMutation({
     mutationFn: (id: string) => purchaseService.deletePurchase(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.purchases.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.purchases.all })
       toast.success('Purchase order deleted successfully!')
     },
     onError: (error: any) => {
@@ -71,7 +71,7 @@ export function useApprovePurchase() {
   return useMutation({
     mutationFn: (id: string) => purchaseService.approvePurchase(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.purchases.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.purchases.all })
       queryClient.invalidateQueries({ queryKey: queryKeys.purchases.detail(id) })
       toast.success('Purchase order approved!')
     },
@@ -87,7 +87,8 @@ export function useReceivePurchase() {
   return useMutation({
     mutationFn: (id: string) => purchaseService.receivePurchase(id),
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.purchases.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.purchases.all })
+      queryClient.invalidateQueries({ queryKey: queryKeys.inventory.all })
       queryClient.invalidateQueries({ queryKey: queryKeys.purchases.detail(id) })
       toast.success('Purchase order received!')
     },

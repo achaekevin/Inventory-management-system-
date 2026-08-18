@@ -24,7 +24,7 @@ export function useCreateSupplier() {
   return useMutation({
     mutationFn: (data: CreateSupplierData) => supplierService.createSupplier(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.suppliers.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.suppliers.all })
       toast.success('Supplier created successfully!')
     },
     onError: (error: any) => {
@@ -40,7 +40,7 @@ export function useUpdateSupplier() {
     mutationFn: ({ id, ...data }: UpdateSupplierData) =>
       supplierService.updateSupplier(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.suppliers.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.suppliers.all })
       queryClient.invalidateQueries({ queryKey: queryKeys.suppliers.detail(variables.id) })
       toast.success('Supplier updated successfully!')
     },
@@ -56,7 +56,7 @@ export function useDeleteSupplier() {
   return useMutation({
     mutationFn: (id: string) => supplierService.deleteSupplier(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.suppliers.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.suppliers.all })
       toast.success('Supplier deleted successfully!')
     },
     onError: (error: any) => {

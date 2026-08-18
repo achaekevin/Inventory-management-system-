@@ -83,7 +83,11 @@ export function CustomersListPage() {
     },
   ]
 
-  const customers = Array.isArray(data) ? data : (data?.data || [])
+  const rawCustomers = Array.isArray(data) ? data : ((data as any)?.data || [])
+  const customers: Customer[] = rawCustomers.map((c: any) => ({
+    ...c,
+    name: c.name || [c.firstName, c.lastName].filter(Boolean).join(' ') || c.companyName || 'Customer',
+  }))
 
   return (
     <div className="space-y-4">

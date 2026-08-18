@@ -14,6 +14,11 @@ export interface CreateCustomerDto {
   notes?: string;
   // Legacy / input mapping helpers
   name?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  loyaltyPoints?: number;
+  isActive?: boolean;
 }
 
 export interface UpdateCustomerDto extends Partial<CreateCustomerDto> {
@@ -101,8 +106,16 @@ export class CustomerService {
       prisma.customer.count({ where }),
     ]);
 
+    const mapped = customers.map((c) => ({
+      ...c,
+      name: getCustomerDisplayName(c),
+      address: c.addresses?.[0]?.address || '',
+      city: c.addresses?.[0]?.city || '',
+      country: c.addresses?.[0]?.country || '',
+    }));
+
     return {
-      data: customers,
+      data: mapped,
       pagination: {
         page,
         pageSize,
@@ -149,7 +162,15 @@ export class CustomerService {
       throw new NotFoundError('Customer not found');
     }
 
-    return customer;
+    const primaryAddr = customer.addresses?.find((a: any) => a.isPrimary) || customer.addresses?.[0];
+
+    return {
+      ...customer,
+      name: getCustomerDisplayName(customer),
+      address: primaryAddr?.address || '',
+      city: primaryAddr?.city || '',
+      country: primaryAddr?.country || '',
+    };
   }
 
   /**
@@ -193,13 +214,34 @@ export class CustomerService {
       },
     });
 
+    if (data.address || data.city || data.country) {
+      await prisma.customerAddress.create({
+        data: {
+          customerId: customer.id,
+          address: data.address || 'N/A',
+          city: data.city || null,
+          country: data.country || null,
+          isPrimary: true,
+        },
+      }).catch((err) => {
+        logger.warn(`Failed to create primary address for customer ${customer.id}: ${err.message}`);
+      });
+    }
+
     this.createAuditLog(userId, 'create', customer.id, 'Customer', null, customer).catch((err) => {
       logger.warn(`Audit log failed for customer ${customer.id}: ${err.message}`);
     });
 
-    logger.info(`Customer created: ${getCustomerDisplayName(customer)}`);
+    const displayName = getCustomerDisplayName(customer);
+    logger.info(`Customer created: ${displayName}`);
 
-    return customer;
+    return {
+      ...customer,
+      name: displayName,
+      address: data.address || '',
+      city: data.city || '',
+      country: data.country || '',
+    };
   }
 
   /**
@@ -241,11 +283,46 @@ export class CustomerService {
       },
     });
 
-    await this.createAuditLog(userId, 'update', customer.id, 'Customer', existingCustomer, customer);
+    if (data.address || data.city || data.country) {
+      const existingAddr = await prisma.customerAddress.findFirst({
+        where: { customerId: id, isPrimary: true },
+      });
+      if (existingAddr) {
+        await prisma.customerAddress.update({
+          where: { id: existingAddr.id },
+          data: {
+            address: data.address || existingAddr.address,
+            city: data.city !== undefined ? data.city : existingAddr.city,
+            country: data.country !== undefined ? data.country : existingAddr.country,
+          },
+        }).catch(() => {});
+      } else {
+        await prisma.customerAddress.create({
+          data: {
+            customerId: id,
+            address: data.address || 'N/A',
+            city: data.city || null,
+            country: data.country || null,
+            isPrimary: true,
+          },
+        }).catch(() => {});
+      }
+    }
 
-    logger.info(`Customer updated: ${getCustomerDisplayName(customer)}`);
+    this.createAuditLog(userId, 'update', customer.id, 'Customer', existingCustomer, customer).catch((err) => {
+      logger.warn(`Audit log failed for customer ${customer.id}: ${err.message}`);
+    });
 
-    return customer;
+    const displayName = getCustomerDisplayName(customer);
+    logger.info(`Customer updated: ${displayName}`);
+
+    return {
+      ...customer,
+      name: displayName,
+      address: data.address || existingCustomer.address || '',
+      city: data.city || existingCustomer.city || '',
+      country: data.country || existingCustomer.country || '',
+    };
   }
 
   /**

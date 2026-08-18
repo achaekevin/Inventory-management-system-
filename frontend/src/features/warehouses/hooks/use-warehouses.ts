@@ -30,7 +30,7 @@ export function useCreateWarehouse() {
   return useMutation({
     mutationFn: (data: CreateWarehouseData) => warehouseService.createWarehouse(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.warehouses.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.warehouses.all })
       toast.success('Warehouse created successfully!')
     },
     onError: (error: any) => {
@@ -46,7 +46,7 @@ export function useUpdateWarehouse() {
     mutationFn: ({ id, ...data }: UpdateWarehouseData & { id: string }) =>
       warehouseService.updateWarehouse(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.warehouses.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.warehouses.all })
       queryClient.invalidateQueries({ queryKey: queryKeys.warehouses.detail(variables.id) })
       toast.success('Warehouse updated successfully!')
     },
@@ -62,7 +62,7 @@ export function useDeleteWarehouse() {
   return useMutation({
     mutationFn: (id: string) => warehouseService.deleteWarehouse(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.warehouses.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.warehouses.all })
       toast.success('Warehouse deleted successfully!')
     },
     onError: (error: any) => {

@@ -24,7 +24,7 @@ export function useCreateCategory() {
   return useMutation({
     mutationFn: (data: CreateCategoryData) => categoryService.createCategory(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all })
       toast.success('Category created successfully!')
     },
     onError: (error: any) => {
@@ -40,7 +40,7 @@ export function useUpdateCategory() {
     mutationFn: ({ id, ...data }: UpdateCategoryData) =>
       categoryService.updateCategory(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all })
       queryClient.invalidateQueries({ queryKey: queryKeys.categories.detail(variables.id) })
       toast.success('Category updated successfully!')
     },
@@ -56,7 +56,7 @@ export function useDeleteCategory() {
   return useMutation({
     mutationFn: (id: string) => categoryService.deleteCategory(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.lists() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all })
       toast.success('Category deleted successfully!')
     },
     onError: (error: any) => {
