@@ -10,6 +10,7 @@ import {
   SessionExpiredPage,
 } from '@/features/auth/pages'
 import { LandingPage } from '@/pages/LandingPage'
+import { DebugPage } from '@/pages/debug'
 import { DashboardPage } from '@/features/dashboard/pages'
 import { ProductsListPage, ProductFormPage } from '@/features/products/pages'
 import { CategoriesListPage } from '@/features/categories/pages'
@@ -299,6 +300,10 @@ export const router = createBrowserRouter([
         element: <BatchesListPage />,
       },
     ],
+  },
+  {
+    path: '/debug',
+    element: <DebugPage />,
   },
   {
     path: '*',
