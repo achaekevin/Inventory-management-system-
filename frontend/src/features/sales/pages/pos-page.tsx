@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useCreateSale } from '../hooks/use-sales'
+import { useOffline } from '@/hooks/use-offline'
 import { formatCurrency, formatNumber } from '@/utils/format'
 import { useNavigate } from 'react-router'
 
