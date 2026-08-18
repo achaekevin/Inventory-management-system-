@@ -10,8 +10,8 @@ export class CustomerController {
     try {
       const filters = {
         page: Number(req.query.page) || 1,
-        pageSize: Number(req.query.pageSize) || 10,
-        search: req.query.search as string,
+        pageSize: Number(req.query.pageSize) || 100,
+        search: (req.query.search as string)?.trim() || undefined,
         isActive: req.query.isActive === 'true' ? true : req.query.isActive === 'false' ? false : undefined,
         customerType: req.query.customerType as 'individual' | 'business' | undefined,
         city: req.query.city as string,

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Pencil, Trash2, Users, Eye } from 'lucide-react'
+import { Plus, Pencil, Trash2, Users, Eye, RefreshCw } from 'lucide-react'
 import { Link } from 'react-router'
 import { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
@@ -12,27 +12,37 @@ import { formatCurrency } from '@/utils/format'
 
 export function CustomersListPage() {
   const [search, setSearch] = useState('')
-  const { data, isLoading } = useCustomers({ search })
+  const { data, isLoading, refetch, isFetching } = useCustomers(search ? { search } : undefined)
   const { mutate: deleteCustomer } = useDeleteCustomer()
 
   const columns: ColumnDef<Customer>[] = [
     {
       accessorKey: 'name',
       header: 'Customer Name',
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 text-muted-foreground" />
-          <span className="font-medium">{row.original.name}</span>
-        </div>
-      ),
+      cell: ({ row }) => {
+        const c = row.original as any
+        const displayName = c.name || [c.firstName, c.lastName].filter(Boolean).join(' ') || c.companyName || 'Customer'
+        return (
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-muted-foreground shrink-0" />
+            <span className="font-medium">{displayName}</span>
+          </div>
+        )
+      },
     },
     {
       accessorKey: 'email',
       header: 'Email',
+      cell: ({ row }) => (
+        <span className="text-sm">{row.original.email || 'N/A'}</span>
+      ),
     },
     {
       accessorKey: 'phone',
       header: 'Phone',
+      cell: ({ row }) => (
+        <span className="text-sm">{row.original.phone || 'N/A'}</span>
+      ),
     },
     {
       accessorKey: 'totalPurchases',
@@ -83,11 +93,24 @@ export function CustomersListPage() {
     },
   ]
 
-  const rawCustomers = Array.isArray(data) ? data : ((data as any)?.data || [])
-  const customers: Customer[] = rawCustomers.map((c: any) => ({
-    ...c,
-    name: c.name || [c.firstName, c.lastName].filter(Boolean).join(' ') || c.companyName || 'Customer',
-  }))
+  const rawCustomers = Array.isArray(data) 
+    ? data 
+    : ((data as any)?.data && Array.isArray((data as any).data) ? (data as any).data : [])
+
+  const customers: Customer[] = rawCustomers.map((c: any) => {
+    const computedName = c.name || [c.firstName, c.lastName].filter(Boolean).join(' ') || c.companyName || 'Customer'
+    return {
+      ...c,
+      name: computedName,
+      firstName: c.firstName || '',
+      lastName: c.lastName || '',
+      email: c.email || '',
+      phone: c.phone || '',
+      creditLimit: Number(c.creditLimit) || 0,
+      loyaltyPoints: Number(c.loyaltyPoints) || 0,
+      isActive: c.isActive ?? true,
+    }
+  })
 
   return (
     <div className="space-y-4">
@@ -96,12 +119,17 @@ export function CustomersListPage() {
           <h1 className="text-3xl font-bold tracking-tight">Customers</h1>
           <p className="text-muted-foreground">Manage your customers</p>
         </div>
-        <Button asChild>
-          <Link to="/customers/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Customer
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="icon" onClick={() => refetch()} disabled={isFetching}>
+            <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
+          </Button>
+          <Button asChild>
+            <Link to="/customers/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Customer
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (

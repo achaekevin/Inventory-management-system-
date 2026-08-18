@@ -78,7 +78,18 @@ export function SuppliersListPage() {
     },
   ]
 
-  const suppliers = Array.isArray(data) ? data : (data?.data || [])
+  const rawSuppliers = Array.isArray(data) 
+    ? data 
+    : ((data as any)?.data && Array.isArray((data as any).data) ? (data as any).data : [])
+
+  const suppliers: Supplier[] = rawSuppliers.map((s: any) => ({
+    ...s,
+    name: s.name || s.companyName || 'Supplier',
+    email: s.email || '',
+    phone: s.phone || '',
+    totalPurchases: Number(s.totalPurchases) || 0,
+    isActive: s.isActive ?? true,
+  }))
 
   return (
     <div className="space-y-4">
@@ -87,12 +98,14 @@ export function SuppliersListPage() {
           <h1 className="text-3xl font-bold tracking-tight">Suppliers</h1>
           <p className="text-muted-foreground">Manage your suppliers</p>
         </div>
-        <Button asChild>
-          <Link to="/suppliers/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Supplier
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild>
+            <Link to="/suppliers/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Supplier
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (
