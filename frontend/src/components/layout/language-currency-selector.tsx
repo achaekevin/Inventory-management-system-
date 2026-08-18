@@ -1,4 +1,4 @@
-import { Globe, DollarSign } from 'lucide-react'
+import { Globe, Coins } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,22 +19,22 @@ import { SupportedLanguage } from '@/features/localization/i18n'
 
 const LANGUAGES: { code: SupportedLanguage; label: string; flag: string }[] = [
   { code: 'en', label: 'English', flag: '🇺🇸' },
+  { code: 'sw', label: 'Kiswahili', flag: '🇰🇪' },
   { code: 'es', label: 'Español', flag: '🇪🇸' },
   { code: 'fr', label: 'Français', flag: '🇫🇷' },
   { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
-  { code: 'sw', label: 'Kiswahili', flag: '🇰🇪' },
   { code: 'zh', label: '中文', flag: '🇨🇳' },
   { code: 'ar', label: 'العربية', flag: '🇸🇦' },
 ]
 
 const CURRENCIES = [
-  { code: 'USD', symbol: '$', name: 'US Dollar' },
+  { code: 'KES', symbol: 'KSh', name: 'Kenyan Shilling (KES)' },
+  { code: 'USD', symbol: 'USD', name: 'US Dollar' },
   { code: 'EUR', symbol: '€', name: 'Euro' },
   { code: 'GBP', symbol: '£', name: 'British Pound' },
-  { code: 'KES', symbol: 'KSh', name: 'Kenyan Shilling' },
   { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
-  { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
-  { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
+  { code: 'CAD', symbol: 'CAD', name: 'Canadian Dollar' },
+  { code: 'AUD', symbol: 'AUD', name: 'Australian Dollar' },
   { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
   { code: 'AED', symbol: 'AED', name: 'UAE Dirham' },
 ]
@@ -84,7 +84,7 @@ export function LanguageCurrencySelector() {
         {/* Submenu for Currency */}
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className="text-xs">
-            <DollarSign className="mr-2 h-4 w-4" />
+            <Coins className="mr-2 h-4 w-4" />
             <span>Currency: <strong className="ml-1">{currency}</strong></span>
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>

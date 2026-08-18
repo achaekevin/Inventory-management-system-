@@ -6,7 +6,7 @@ import {
   XCircle,
   Clock,
   TrendingUp,
-  DollarSign,
+  Coins,
   Users,
   ChevronDown,
   ChevronUp,
@@ -354,7 +354,7 @@ export function CustomerCreditPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {[
-          { label: 'Total Outstanding', value: fmt(totalOutstanding), icon: DollarSign, color: 'bg-orange-500/10 text-orange-600' },
+          { label: 'Total Outstanding', value: fmt(totalOutstanding), icon: Coins, color: 'bg-orange-500/10 text-orange-600' },
           { label: 'Total Credit Issued', value: fmt(totalLimit), icon: CreditCard, color: 'bg-blue-500/10 text-blue-600' },
           { label: 'Customers with Credit', value: withCredit, icon: Users, color: 'bg-green-500/10 text-green-600' },
           { label: 'Limit Exceeded', value: exceeded, icon: AlertTriangle, color: 'bg-red-500/10 text-red-600' },

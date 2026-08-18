@@ -1,5 +1,5 @@
 import { 
-  DollarSign, 
+  Coins, 
   Package, 
   ShoppingCart, 
   TrendingUp, 
@@ -179,7 +179,7 @@ export function DashboardPage() {
                 title="Total Revenue"
                 value={formatCurrency(stats.totalRevenue)}
                 change={12.5}
-                icon={DollarSign}
+                icon={Coins}
                 iconColor="text-emerald-600"
                 iconBgColor="bg-emerald-500/10"
                 trend="up"

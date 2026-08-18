@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { DollarSign, TrendingUp } from 'lucide-react'
+import { Coins, TrendingUp } from 'lucide-react'
 import {
   BarChart,
   Bar,
@@ -56,7 +56,7 @@ export function RevenueChart({ data, title = 'Revenue Trend', description }: Rev
                 whileHover={{ scale: 1.1 }}
                 className="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-500 to-blue-500 flex items-center justify-center shadow-lg"
               >
-                <DollarSign className="w-3.5 h-3.5 text-white" />
+                <Coins className="w-3.5 h-3.5 text-white" />
               </motion.div>
               {title}
             </CardTitle>

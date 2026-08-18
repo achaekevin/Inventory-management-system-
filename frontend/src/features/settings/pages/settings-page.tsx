@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Save, Building2, DollarSign, FileText, Palette, Mail, Shield } from 'lucide-react'
+import { Save, Building2, Coins, FileText, Palette, Mail, Shield } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,7 +13,7 @@ export function SettingsPage() {
 
   const tabs = [
     { id: 'business', label: 'Business Info', icon: Building2 },
-    { id: 'currency', label: 'Currency & Tax', icon: DollarSign },
+    { id: 'currency', label: 'Currency & Tax', icon: Coins },
     { id: 'invoice', label: 'Invoice Settings', icon: FileText },
     { id: 'appearance', label: 'Appearance', icon: Palette },
     { id: 'email', label: 'Email', icon: Mail },

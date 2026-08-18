@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   Globe,
-  DollarSign,
+  Coins,
   Clock,
   Calendar,
   Receipt,
@@ -186,7 +186,7 @@ export function LocalizationSettingsPage() {
         <Card className="shadow-sm">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-emerald-500" />
+              <Coins className="h-5 w-5 text-emerald-500" />
               Currency & Tax Calculation Rules
             </CardTitle>
             <CardDescription className="text-xs">
@@ -202,15 +202,15 @@ export function LocalizationSettingsPage() {
                 onChange={(e) => setCurrency(e.target.value)}
                 className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm outline-none focus:ring-1 focus:ring-ring font-medium"
               >
-                <option value="USD">USD ($) - US Dollar</option>
+                <option value="KES">KES (KSh) - Kenyan Shilling</option>
+                <option value="USD">USD - US Dollar</option>
                 <option value="EUR">EUR (€) - Euro</option>
                 <option value="GBP">GBP (£) - British Pound</option>
-                <option value="KES">KES (KSh) - Kenyan Shilling</option>
                 <option value="JPY">JPY (¥) - Japanese Yen</option>
-                <option value="CAD">CAD (C$) - Canadian Dollar</option>
-                <option value="AUD">AUD (A$) - Australian Dollar</option>
+                <option value="CAD">CAD - Canadian Dollar</option>
+                <option value="AUD">AUD - Australian Dollar</option>
                 <option value="INR">INR (₹) - Indian Rupee</option>
-                <option value="AED">AED (AED) - UAE Dirham</option>
+                <option value="AED">AED - UAE Dirham</option>
               </select>
             </div>
 

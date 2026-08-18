@@ -16,7 +16,7 @@ import {
   Loader2,
   Zap,
   Package,
-  DollarSign,
+  Coins,
   Bell,
   Archive,
   AlertTriangle,
@@ -62,7 +62,7 @@ const RULE_TYPE_META: Record<AutomationRuleType, {
   high_value_notify: {
     label: 'High-Value Purchase Alert',
     description: 'Notify managers when a purchase total exceeds a configured threshold.',
-    icon: DollarSign,
+    icon: Coins,
     color: 'text-amber-600',
     gradient: 'from-amber-500/10 to-amber-600/5',
   },

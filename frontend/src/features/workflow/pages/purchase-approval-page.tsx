@@ -13,7 +13,7 @@ import {
   Loader2,
   AlertCircle,
   ShieldCheck,
-  DollarSign,
+  Coins,
   ShoppingCart,
   Inbox,
 } from 'lucide-react'
@@ -45,7 +45,7 @@ const STATUS_CONFIG: Record<WorkflowStatus, { label: string; color: string; icon
   draft: { label: 'Draft', color: 'bg-gray-500/10 text-gray-600 border-gray-200', icon: ClipboardList },
   submitted: { label: 'Submitted', color: 'bg-blue-500/10 text-blue-600 border-blue-200', icon: Send },
   pending_supervisor: { label: 'Awaiting Supervisor', color: 'bg-yellow-500/10 text-yellow-700 border-yellow-200', icon: ShieldCheck },
-  pending_finance: { label: 'Awaiting Finance', color: 'bg-orange-500/10 text-orange-700 border-orange-200', icon: DollarSign },
+  pending_finance: { label: 'Awaiting Finance', color: 'bg-orange-500/10 text-orange-700 border-orange-200', icon: Coins },
   approved: { label: 'Approved', color: 'bg-green-500/10 text-green-700 border-green-200', icon: CheckCircle2 },
   ordered: { label: 'Order Placed', color: 'bg-purple-500/10 text-purple-700 border-purple-200', icon: Truck },
   received: { label: 'Received', color: 'bg-teal-500/10 text-teal-700 border-teal-200', icon: PackageCheck },
@@ -58,7 +58,7 @@ const STEP_CONFIG: Record<string, { label: string; icon: React.ElementType; posi
   submitted: { label: 'Submitted for approval', icon: Send, positive: true },
   supervisor_approved: { label: 'Approved by Supervisor', icon: ShieldCheck, positive: true },
   supervisor_rejected: { label: 'Rejected by Supervisor', icon: XCircle, positive: false },
-  finance_approved: { label: 'Approved by Finance', icon: DollarSign, positive: true },
+  finance_approved: { label: 'Approved by Finance', icon: Coins, positive: true },
   finance_rejected: { label: 'Rejected by Finance', icon: XCircle, positive: false },
   ordered: { label: 'Order Placed with Supplier', icon: Truck, positive: true },
   received: { label: 'Goods Received', icon: PackageCheck, positive: true },
@@ -70,7 +70,7 @@ const PIPELINE_STAGES: { key: WorkflowStatus; label: string; icon: React.Element
   { key: 'draft', label: 'Draft', icon: ClipboardList },
   { key: 'submitted', label: 'Submitted', icon: Send },
   { key: 'pending_supervisor', label: 'Supervisor', icon: ShieldCheck },
-  { key: 'pending_finance', label: 'Finance', icon: DollarSign },
+  { key: 'pending_finance', label: 'Finance', icon: Coins },
   { key: 'approved', label: 'Approved', icon: CheckCircle2 },
   { key: 'ordered', label: 'Ordered', icon: Truck },
   { key: 'received', label: 'Received', icon: PackageCheck },
@@ -303,7 +303,7 @@ function PurchaseDetailPanel({
     actions.push({ type: 'sup-reject', label: 'Supervisor Reject', icon: XCircle, variant: 'destructive' })
   }
   if (status === 'pending_finance') {
-    actions.push({ type: 'fin-approve', label: 'Finance Approve', icon: DollarSign })
+    actions.push({ type: 'fin-approve', label: 'Finance Approve', icon: Coins })
     actions.push({ type: 'fin-reject', label: 'Finance Reject', icon: XCircle, variant: 'destructive' })
   }
   if (status === 'approved') actions.push({ type: 'place-order', label: 'Place Supplier Order', icon: Truck })
@@ -492,7 +492,7 @@ export function PurchaseApprovalPage() {
         {[
           { label: 'Pending My Action', value: pending.length, icon: Inbox, color: 'bg-blue-500/10 text-blue-600' },
           { label: 'Awaiting Supervisor', value: all.filter(p => p.status === 'submitted' || p.status === 'pending_supervisor').length, icon: ShieldCheck, color: 'bg-yellow-500/10 text-yellow-600' },
-          { label: 'Awaiting Finance', value: all.filter(p => p.status === 'pending_finance').length, icon: DollarSign, color: 'bg-orange-500/10 text-orange-600' },
+          { label: 'Awaiting Finance', value: all.filter(p => p.status === 'pending_finance').length, icon: Coins, color: 'bg-orange-500/10 text-orange-600' },
           { label: 'Orders Placed', value: all.filter(p => p.status === 'ordered').length, icon: Truck, color: 'bg-purple-500/10 text-purple-600' },
         ].map(({ label, value, icon: Icon, color }) => (
           <Card key={label}>

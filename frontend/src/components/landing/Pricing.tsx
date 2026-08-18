@@ -26,7 +26,7 @@ const plans = [
   },
   {
     name: 'Professional',
-    price: '$49',
+    price: 'KSh 4,999',
     period: 'per month',
     description: 'For growing businesses with multiple locations',
     features: [

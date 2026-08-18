@@ -1,7 +1,7 @@
 import { useParams, useNavigate, Link } from 'react-router'
 import {
   ArrowLeft, ShoppingBag, User, Calendar, CreditCard,
-  Package, Hash, DollarSign, Loader2, Printer
+  Package, Hash, Coins, Loader2, Printer
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'

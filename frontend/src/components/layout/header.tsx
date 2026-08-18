@@ -127,7 +127,7 @@ export function Header() {
                 <div className="flex flex-col gap-1 rounded-md p-2 hover:bg-accent">
                   <p className="text-sm font-medium">Payment received</p>
                   <p className="text-xs text-muted-foreground">
-                    Payment of $500 received from John Doe
+                    Payment of KSh 50,000 received from John Doe
                   </p>
                   <span className="text-xs text-muted-foreground">1 day ago</span>
                 </div>

@@ -4,7 +4,7 @@ import {
   Plus, 
   Search, 
   RefreshCw, 
-  DollarSign, 
+  Coins, 
   Smartphone, 
   Building2, 
   Banknote, 
@@ -232,7 +232,7 @@ export function PaymentsListPage() {
             </p>
           </div>
           <div className="p-3 bg-green-500/10 rounded-lg text-green-600">
-            <DollarSign className="h-6 w-6" />
+            <Coins className="h-6 w-6" />
           </div>
         </Card>
 

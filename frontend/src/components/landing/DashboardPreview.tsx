@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Package, ShoppingCart, DollarSign, AlertTriangle } from 'lucide-react';
+import { TrendingUp, TrendingDown, Package, ShoppingCart, Coins, AlertTriangle } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Section, SectionHeader } from './Section';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -7,10 +7,10 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, R
 const kpiData = [
   {
     title: 'Total Revenue',
-    value: '$94,250',
+    value: 'KSh 12,450,000',
     change: '+23.5%',
     trend: 'up',
-    icon: DollarSign,
+    icon: Coins,
     color: 'text-green-600',
   },
   {
@@ -59,10 +59,10 @@ const salesData = [
 ];
 
 const recentTransactions = [
-  { id: 'ORD-1234', type: 'Sale', amount: '$1,250.00', status: 'Completed' },
-  { id: 'PO-5678', type: 'Purchase', amount: '$3,500.00', status: 'Pending' },
-  { id: 'ORD-1235', type: 'Sale', amount: '$890.00', status: 'Completed' },
-  { id: 'ORD-1236', type: 'Sale', amount: '$2,100.00', status: 'Processing' },
+  { id: 'ORD-1234', type: 'Sale', amount: 'KSh 1,250.00', status: 'Completed' },
+  { id: 'PO-5678', type: 'Purchase', amount: 'KSh 3,500.00', status: 'Pending' },
+  { id: 'ORD-1235', type: 'Sale', amount: 'KSh 890.00', status: 'Completed' },
+  { id: 'ORD-1236', type: 'Sale', amount: 'KSh 2,100.00', status: 'Processing' },
 ];
 
 const lowStockAlerts = [

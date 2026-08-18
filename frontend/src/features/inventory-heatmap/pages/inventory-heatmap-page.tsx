@@ -9,7 +9,7 @@ import {
   Filter,
   RefreshCw,
   Building2,
-  DollarSign,
+  Coins,
   Loader2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'

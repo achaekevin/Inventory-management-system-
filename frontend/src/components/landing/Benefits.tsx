@@ -5,7 +5,7 @@ import {
   Zap,
   CheckCircle,
   BarChart3,
-  DollarSign,
+  Coins,
   Clock,
   Shield,
 } from 'lucide-react';
@@ -38,7 +38,7 @@ const benefits = [
     description: 'Track sales trends, best-sellers, and customer preferences. Make informed decisions with real-time data.',
   },
   {
-    icon: DollarSign,
+    icon: Coins,
     title: 'Increase Profitability',
     description: 'Reduce carrying costs, minimize waste, and optimize pricing. Improve profit margins with data-driven insights.',
   },
